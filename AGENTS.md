@@ -14,6 +14,14 @@ defaults:
   strategy:
     dry_run: false
     max_changes: 50
+  communication_profile:
+    language: 'Deutsch (Alltagssprache, ohne Fachjargon)'
+    workflow:
+      - 'Vor jedem Arbeitspaket stellt der Agent nummerierte, leicht verständliche Fragen, bis das Ziel klar ist.'
+      - 'Aufgaben beginnen erst nach expliziter Bestätigung des gemeinsamen Verständnisses durch die Autorin/den Autor.'
+      - 'Wesentliche Antworten werden kurz protokolliert, damit Folgefragen darauf aufbauen können.'
+      - 'Zu Beginn jeder Session wird der aktuelle Projektstand erfasst (z. B. git status, zuletzt geänderte Dateien, offene TODOs), damit Nachfragen kontextualisiert werden können.'
+      - 'Nach jedem abgeschlossenen Arbeitsschritt mit Änderungen wird aktiv gefragt, ob ein separater Commit erstellt werden soll (kleine Schritte bevorzugen).'
   reviewers:
     required: ['appsec', 'qa-lead']
     optional: ['ux-director', 'lead-architect']
@@ -50,6 +58,7 @@ globals:
     - 'Shortcodes nur aus Allow-List einsetzen (space, chart_itmarket_all, itmarket_table, itmarket_table compare). Eingaben vor dem Einfügen validieren.'
     - 'Alle Markt-Datenänderungen in docs/ müssen nachvollziehbar sein (Quelle, Berechnung); keine manuellen Zahlen direkt im Lauftext ohne Kommentar.'
     - 'UX darf kein unescaped HTML rendern; Markdown-Vorschau nutzt Sanitizer/Safe-List.'
+    - 'Kommunikation mit Stakeholdern erfolgt in einfacher, deutscher Alltagssprache; Fachbegriffe werden sofort erklärt.'
   conventions:
     clean_code:
       - 'Frontend: TypeScript strict, dedizierte Module für Frontmatter-Schema, Section-Presets und Shortcode-Serialisierung; keine Copy-Paste-Markdown-Strings.'
@@ -105,6 +114,7 @@ agents:
       - 'Build/Lint/Typecheck/Test grün'
       - 'Security-Check ohne High/Critical'
       - 'UX/A11y keine kritischen Issues'
+      - 'Aufgaben starten erst nach dokumentiertem gemeinsamen Verständnis (Fragen & Bestätigung).'
 
   - id: lead-architect
     role: 'Lead Architect'
@@ -199,6 +209,7 @@ playbooks:
   - id: author-report
     title: 'Neuen IT-Arbeitsmarktbericht erstellen'
     steps:
+      - 'Kurz-Check-in mit der Autorin/dem Autor: Thema, Zielgruppe, Datenstand, gewünschte Assets klären (Fragen & Antworten dokumentieren).'
       - 'Daten aktualisieren: docs/monthly.toml prüfen/ergänzen (Quelle dokumentieren).'
       - 'npm ci --prefix frontend || npm --prefix frontend install'
       - 'npm --prefix frontend run dev (Form & Preview testen).'
