@@ -5,6 +5,7 @@ import { serializeFrontmatter } from './lib/parsers/frontmatter';
 import { parseMonthlyToml } from './lib/parsers/monthly';
 import {
   defaultFrontmatter,
+  defaultBody,
   frontmatterSchema,
   type FaqEntry,
   type Frontmatter,
@@ -42,14 +43,14 @@ const createDefaultShortcode = (type: Shortcode['type']): Shortcode => {
 };
 
 const loadFrontmatterFromStorage = (): Frontmatter => {
-  if (typeof window === 'undefined') return defaultFrontmatter();
+  if (typeof window === 'undefined') return defaultFrontmatter;
   const raw = window.localStorage.getItem(FRONTMATTER_STORAGE_KEY);
-  if (!raw) return defaultFrontmatter();
+  if (!raw) return defaultFrontmatter;
   try {
     const parsed = JSON.parse(raw);
     return frontmatterSchema.parse(parsed);
   } catch {
-    return defaultFrontmatter();
+    return defaultFrontmatter;
   }
 };
 
@@ -72,8 +73,8 @@ const loadShortcodesFromStorage = (): Shortcode[] => {
 };
 
 const loadBodyFromStorage = (): string => {
-  if (typeof window === 'undefined') return '';
-  return window.localStorage.getItem(BODY_STORAGE_KEY) ?? '';
+  if (typeof window === 'undefined') return defaultBody;
+  return window.localStorage.getItem(BODY_STORAGE_KEY) ?? defaultBody;
 };
 
 const listToInput = (value: string[]) => value.join(', ');
@@ -119,9 +120,14 @@ const latestAggregate = monthlyDataset.it_aggregate.at(0);
 const latestJobs = monthlyDataset.it_jobs.at(0);
 
 function App() {
-  const [frontmatter, setFrontmatter] = useState<Frontmatter>(loadFrontmatterFromStorage);
+  const [frontmatter, setFrontmatter] = useState<Frontmatter>(defaultFrontmatter);
   const [shortcodes, setShortcodes] = useState<Shortcode[]>(loadShortcodesFromStorage);
-  const [body, setBody] = useState<string>(loadBodyFromStorage);
+  const [body, setBody] = useState<string>(defaultBody);
+
+  useEffect(() => {
+    setFrontmatter(loadFrontmatterFromStorage());
+    setBody(loadBodyFromStorage());
+  }, []);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
