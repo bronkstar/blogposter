@@ -47,5 +47,5 @@ Zu jeder Phase entsteht ein Commit und eine Statusnotiz (siehe unten).
 - *Phase 1 – Projekt-Setup*: ✅ erledigt am 2025-12-22 (Commit: `feat: setup frontend baseline`) – Vite/React/TS inkl. Tailwind & shadcn eingerichtet, Build läuft.
 - *Phase 2 – Schema & Parser*: ✅ erledigt am 2025-12-22 (Commit: `feat: add schema and parser layer`) – Frontmatter/Shortcode/Monthly-Schema + Parser/Serializer vorhanden.
 - *Phase 3 – Form-UX*: ✅ erledigt am 2025-12-22 (Commit: `feat: add frontmatter form ux`) – Formular (Metadaten, FAQ, Shortcodes) + Local Storage + monthly.toml Vorschau.
-- *Phase 4 – Preview & Export*: _offen_
+- *Phase 4 – Preview & Export*: 🔄 in Arbeit (Body-Editor, Preview, Export werden umgesetzt – Stand: erneuter Phase-4-Anlauf, Commit folgt)
 - *Phase 5 – Tests & Docs*: _offen_
