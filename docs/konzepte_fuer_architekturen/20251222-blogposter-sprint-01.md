@@ -40,11 +40,12 @@ Zu jeder Phase entsteht ein Commit und eine Statusnotiz (siehe unten).
 | --- | ----- | ------- | ----- |
 | 1 | Soll der Export Dateiname fest sein (z. B. aus slug)? | Ja, Dateiname aus `slug` ableiten (z. B. `slug.md`). | 2025-12-22 |
 | 2 | Müssen wir bereits eine Upload-Option (z. B. Git push) bieten? | Nein, lokaler Download reicht. | 2025-12-22 |
+| 3 | Wie pflegen wir monthly.toml aus der App heraus? | Wird später über Issue `docs/issues/001-monthly-toml-editor.md` umgesetzt (Export statt direktem Schreibzugriff). | 2025-12-22 |
 
 ## Statusnotizen
 
 - *Phase 1 – Projekt-Setup*: ✅ erledigt am 2025-12-22 (Commit: `feat: setup frontend baseline`) – Vite/React/TS inkl. Tailwind & shadcn eingerichtet, Build läuft.
-- *Phase 2 – Schema & Parser*: _offen_
+- *Phase 2 – Schema & Parser*: ✅ erledigt am 2025-12-22 (Commit: `feat: add schema and parser layer`) – Frontmatter/Shortcode/Monthly-Schema + Parser/Serializer vorhanden.
 - *Phase 3 – Form-UX*: _offen_
 - *Phase 4 – Preview & Export*: _offen_
 - *Phase 5 – Tests & Docs*: _offen_
