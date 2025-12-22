@@ -43,7 +43,7 @@ Zu jeder Phase entsteht ein Commit und eine Statusnotiz (siehe unten).
 
 ## Statusnotizen
 
-- *Phase 1 – Projekt-Setup*: _offen_ (Commit: —, Datum: —)
+- *Phase 1 – Projekt-Setup*: ✅ erledigt am 2025-12-22 (Commit: `feat: setup frontend baseline`) – Vite/React/TS inkl. Tailwind & shadcn eingerichtet, Build läuft.
 - *Phase 2 – Schema & Parser*: _offen_
 - *Phase 3 – Form-UX*: _offen_
 - *Phase 4 – Preview & Export*: _offen_
