@@ -131,10 +131,12 @@ const deriveMonthlyDefaults = (): MonthlyEntry => {
   };
 };
 
+const monthlyDefaultsPreset = deriveMonthlyDefaults();
+
 const loadMonthlyEntryFromStorage = (): MonthlyEntry => {
-  if (typeof window === 'undefined') return deriveMonthlyDefaults();
+  if (typeof window === 'undefined') return monthlyDefaultsPreset;
   const raw = window.localStorage.getItem(MONTHLY_ENTRY_STORAGE_KEY);
-  if (!raw) return deriveMonthlyDefaults();
+  if (!raw) return monthlyDefaultsPreset;
   try {
     const parsed: MonthlyEntry = JSON.parse(raw);
     return parsed;
@@ -242,11 +244,7 @@ function App() {
   const [frontmatter, setFrontmatter] = useState<Frontmatter>(defaultFrontmatter);
   const [shortcodes, setShortcodes] = useState<Shortcode[]>(loadShortcodesFromStorage);
   const [body, setBody] = useState<string>(defaultBody);
-  const [monthlyEntry, setMonthlyEntry] = useState<MonthlyEntry>(deriveMonthlyDefaults());
-  const [modifiedFrontmatter, setModifiedFrontmatter] = useState(false);
-  const [modifiedBody, setModifiedBody] = useState(false);
-  const [modifiedShortcodes, setModifiedShortcodes] = useState(false);
-  const [modifiedMonthly, setModifiedMonthly] = useState(false);
+  const [monthlyEntry, setMonthlyEntry] = useState<MonthlyEntry>(monthlyDefaultsPreset);
 
   useEffect(() => {
     setFrontmatter(loadFrontmatterFromStorage());
@@ -302,7 +300,6 @@ function App() {
         ...prev,
         [field]: value,
       }));
-      setModifiedFrontmatter(true);
     };
 
   const handleArrayFieldChange =
@@ -312,7 +309,6 @@ function App() {
           ...prev,
           [field]: inputToList(event.target.value),
         }));
-      setModifiedFrontmatter(true);
       };
 
   const updateFaqEntry = (index: number, patch: Partial<FaqEntry>) => {
@@ -321,7 +317,6 @@ function App() {
       copy[index] = { ...copy[index], ...patch };
       return { ...prev, faq: copy };
     });
-    setModifiedFrontmatter(true);
   };
 
   const addFaqEntry = () => {
@@ -329,7 +324,6 @@ function App() {
       ...prev,
       faq: [...prev.faq, { question: '', answer: '' }],
     }));
-    setModifiedFrontmatter(true);
   };
 
   const removeFaqEntry = (index: number) => {
@@ -337,28 +331,23 @@ function App() {
       ...prev,
       faq: prev.faq.filter((_, idx) => idx !== index),
     }));
-    setModifiedFrontmatter(true);
   };
 
   const addShortcode = (type: Shortcode['type']) => {
     setShortcodes((prev) => [...prev, createDefaultShortcode(type)]);
-    setModifiedShortcodes(true);
   };
 
   const updateShortcode = (index: number, nextValue: Shortcode) => {
     setShortcodes((prev) => prev.map((item, idx) => (idx === index ? nextValue : item)));
-    setModifiedShortcodes(true);
   };
 
   const removeShortcode = (index: number) => {
     setShortcodes((prev) => prev.filter((_, idx) => idx !== index));
-    setModifiedShortcodes(true);
   };
 
   const insertShortcodeIntoBody = (shortcode: Shortcode) => {
     const template = formatShortcode(shortcode);
     setBody((prev) => (prev ? `${prev.trim()}\n\n${template}\n` : `${template}\n`));
-    setModifiedBody(true);
   };
 
   const handleDownload = () => {
@@ -389,7 +378,6 @@ function App() {
         ...prev,
         [field]: value,
       }));
-      setModifiedMonthly(true);
     };
 
   const handleMonthlyNumbers =
@@ -413,13 +401,73 @@ function App() {
           [key]: numeric,
         },
       }));
-      setModifiedMonthly(true);
     };
 
   const monthlySnippet = useMemo(
     () => serializeMonthlyEntry(monthlyEntry),
     [monthlyEntry],
   );
+
+  const FieldBadge = ({ isDefault }: { isDefault: boolean }) => (
+    <span className={`text-xs font-semibold ${isDefault ? 'text-muted-foreground' : 'text-emerald-600'}`}>
+      {isDefault ? 'Standard' : 'Neu'}
+    </span>
+  );
+
+  const renderLabel = (text: string, isDefault: boolean) => (
+    <div className="flex items-center justify-between">
+      <span className="text-sm font-medium">{text}</span>
+      <FieldBadge isDefault={isDefault} />
+    </div>
+  );
+
+  const isFrontmatterFieldDefault = (field: keyof Frontmatter) => {
+    const initial = defaultFrontmatter[field];
+    const current = frontmatter[field];
+    if (Array.isArray(initial) && Array.isArray(current)) {
+      return JSON.stringify(initial) === JSON.stringify(current);
+    }
+    if (typeof initial === 'object' && initial !== null) {
+      return JSON.stringify(initial) === JSON.stringify(current);
+    }
+    return initial === current;
+  };
+
+  const isFrontmatterOverallDefault = useMemo(
+    () => JSON.stringify(frontmatter) === JSON.stringify(defaultFrontmatter),
+    [frontmatter],
+  );
+  const isBodyDefault = useMemo(
+    () => body.trim() === defaultBody.trim(),
+    [body],
+  );
+  const areShortcodesDefault = useMemo(
+    () => shortcodes.length === 0,
+    [shortcodes],
+  );
+  const areMonthlyDefault = useMemo(
+    () => JSON.stringify(monthlyEntry) === JSON.stringify(monthlyDefaultsPreset),
+    [monthlyEntry],
+  );
+
+  const isMonthlyTextDefault = (field: 'month' | 'label') =>
+    monthlyEntry[field] === monthlyDefaultsPreset[field];
+
+  const isMonthlyNumberDefault = (
+    bucket:
+      | 'itAggregate'
+      | 'itJobs'
+      | 'germany'
+      | 'infraAggregate'
+      | 'infraJobs'
+      | 'softwareAggregate'
+      | 'softwareJobs',
+    key: keyof MonthlyCategoryNumbers | 'it_jobs',
+  ) => {
+    const baseBucket = monthlyDefaultsPreset[bucket] as MonthlyCategoryNumbers & { it_jobs?: number };
+    const currentBucket = monthlyEntry[bucket] as MonthlyCategoryNumbers & { it_jobs?: number };
+    return (currentBucket[key] ?? null) === (baseBucket[key] ?? null);
+  };
 
   return (
     <main className="mx-auto max-w-6xl space-y-10 px-4 py-10">
@@ -432,17 +480,17 @@ function App() {
           </p>
         </div>
         <ul className="flex flex-wrap gap-6 text-sm">
-          <li className={modifiedFrontmatter ? 'text-foreground' : 'text-muted-foreground'}>
-            {modifiedFrontmatter ? '✅ Metadaten bearbeitet' : '⚠️ Metadaten noch Beispiel'}
+          <li className={isFrontmatterOverallDefault ? 'text-muted-foreground' : 'text-emerald-700'}>
+            {isFrontmatterOverallDefault ? '⚠️ Metadaten noch Beispiel' : '✅ Metadaten angepasst'}
           </li>
-          <li className={modifiedBody ? 'text-foreground' : 'text-muted-foreground'}>
-            {modifiedBody ? '✅ Body bearbeitet' : '⚠️ Body noch Beispiel'}
+          <li className={isBodyDefault ? 'text-muted-foreground' : 'text-emerald-700'}>
+            {isBodyDefault ? '⚠️ Body noch Beispiel' : '✅ Body angepasst'}
           </li>
-          <li className={modifiedShortcodes ? 'text-foreground' : 'text-muted-foreground'}>
-            {modifiedShortcodes ? '✅ Shortcodes bearbeitet' : '⚠️ Shortcodes noch Beispiel'}
+          <li className={areShortcodesDefault ? 'text-muted-foreground' : 'text-emerald-700'}>
+            {areShortcodesDefault ? '⚠️ Shortcodes noch Beispiel' : '✅ Shortcodes angepasst'}
           </li>
-          <li className={modifiedMonthly ? 'text-foreground' : 'text-muted-foreground'}>
-            {modifiedMonthly ? '✅ Monatsdaten bearbeitet' : '⚠️ Monatsdaten noch Beispiel'}
+          <li className={areMonthlyDefault ? 'text-muted-foreground' : 'text-emerald-700'}>
+            {areMonthlyDefault ? '⚠️ Monatsdaten noch Beispiel' : '✅ Monatsdaten angepasst'}
           </li>
         </ul>
       </header>
@@ -450,13 +498,11 @@ function App() {
       <section className="rounded-lg border border-border bg-card p-6 shadow-sm">
         <div className="flex items-center justify-between gap-4">
           <h2 className="text-xl font-semibold">Metadaten</h2>
-          <span className={`text-xs font-semibold ${modifiedFrontmatter ? 'text-emerald-600' : 'text-muted-foreground'}`}>
-            {modifiedFrontmatter ? 'Eigene Eingaben' : 'Beispieldaten aktiv'}
-          </span>
+          <FieldBadge isDefault={isFrontmatterOverallDefault} />
         </div>
         <div className="mt-4 grid gap-4 md:grid-cols-2">
           <div className="flex flex-col gap-1">
-            <label className="text-sm font-medium">Titel</label>
+            {renderLabel('Titel', isFrontmatterFieldDefault('title'))}
             <input
               className="rounded-md border border-input bg-background px-3 py-2 text-sm"
               value={frontmatter.title}
@@ -466,7 +512,7 @@ function App() {
             {frontmatterFieldErrors.title && <p className="text-sm text-destructive">{frontmatterFieldErrors.title[0]}</p>}
           </div>
           <div className="flex flex-col gap-1">
-            <label className="text-sm font-medium">Slug</label>
+            {renderLabel('Slug', isFrontmatterFieldDefault('slug'))}
             <input
               className="rounded-md border border-input bg-background px-3 py-2 text-sm"
               value={frontmatter.slug}
@@ -479,7 +525,7 @@ function App() {
 
         <div className="mt-4 grid gap-4">
           <div className="flex flex-col gap-1">
-            <label className="text-sm font-medium">Beschreibung</label>
+            {renderLabel('Beschreibung', isFrontmatterFieldDefault('description'))}
             <textarea
               className="min-h-[80px] rounded-md border border-input bg-background px-3 py-2 text-sm"
               value={frontmatter.description}
@@ -488,7 +534,7 @@ function App() {
             {frontmatterFieldErrors.description && <p className="text-sm text-destructive">{frontmatterFieldErrors.description[0]}</p>}
           </div>
           <div className="flex flex-col gap-1">
-            <label className="text-sm font-medium">Summary</label>
+            {renderLabel('Summary', isFrontmatterFieldDefault('summary'))}
             <textarea
               className="min-h-[80px] rounded-md border border-input bg-background px-3 py-2 text-sm"
               value={frontmatter.summary}
@@ -500,7 +546,7 @@ function App() {
 
         <div className="mt-4 grid gap-4 md:grid-cols-2">
           <div className="flex flex-col gap-1">
-            <label className="text-sm font-medium">Datum (ISO)</label>
+            {renderLabel('Datum (ISO)', isFrontmatterFieldDefault('date'))}
             <input
               className="rounded-md border border-input bg-background px-3 py-2 text-sm"
               value={frontmatter.date}
@@ -510,7 +556,7 @@ function App() {
             {frontmatterFieldErrors.date && <p className="text-sm text-destructive">{frontmatterFieldErrors.date[0]}</p>}
           </div>
           <div className="flex flex-col gap-1">
-            <label className="text-sm font-medium">Autor</label>
+            {renderLabel('Autor', isFrontmatterFieldDefault('author'))}
             <input
               className="rounded-md border border-input bg-background px-3 py-2 text-sm"
               value={frontmatter.author}
@@ -522,7 +568,7 @@ function App() {
 
         <div className="mt-4 grid gap-4 md:grid-cols-2">
           <div className="flex flex-col gap-1">
-            <label className="text-sm font-medium">Bildpfad</label>
+            {renderLabel('Bildpfad', isFrontmatterFieldDefault('image'))}
             <input
               className="rounded-md border border-input bg-background px-3 py-2 text-sm"
               value={frontmatter.image}
@@ -532,7 +578,7 @@ function App() {
             {frontmatterFieldErrors.image && <p className="text-sm text-destructive">{frontmatterFieldErrors.image[0]}</p>}
           </div>
           <div className="flex flex-col gap-1">
-            <label className="text-sm font-medium">Bild Alt-Text</label>
+            {renderLabel('Bild Alt-Text', isFrontmatterFieldDefault('imageAlt'))}
             <input
               className="rounded-md border border-input bg-background px-3 py-2 text-sm"
               value={frontmatter.imageAlt}
@@ -543,12 +589,15 @@ function App() {
         </div>
 
         <div className="mt-4 grid gap-4 md:grid-cols-2">
-          <label className="flex items-center gap-2 text-sm font-medium">
-            <input type="checkbox" className="rounded border border-input" checked={frontmatter.draft} onChange={handleFrontmatterChange('draft')} />
-            Draft aktivieren
-          </label>
           <div className="flex flex-col gap-1">
-            <label className="text-sm font-medium">jobSnippedTag</label>
+            {renderLabel('Draft aktivieren', isFrontmatterFieldDefault('draft'))}
+            <label className="flex items-center gap-2 text-sm">
+              <input type="checkbox" className="rounded border border-input" checked={frontmatter.draft} onChange={handleFrontmatterChange('draft')} />
+              <span>Aktiv</span>
+            </label>
+          </div>
+          <div className="flex flex-col gap-1">
+            {renderLabel('jobSnippedTag', isFrontmatterFieldDefault('jobSnippedTag'))}
             <input
               className="rounded-md border border-input bg-background px-3 py-2 text-sm"
               value={frontmatter.jobSnippedTag}
@@ -560,7 +609,7 @@ function App() {
 
         <div className="mt-4 grid gap-4 md:grid-cols-2">
           <div className="flex flex-col gap-1">
-            <label className="text-sm font-medium">Lesedauer</label>
+            {renderLabel('Lesedauer', isFrontmatterFieldDefault('lesedauer'))}
             <input
               className="rounded-md border border-input bg-background px-3 py-2 text-sm"
               value={frontmatter.lesedauer}
@@ -577,9 +626,10 @@ function App() {
         <div className="mt-6 grid gap-4 md:grid-cols-2">
           {(['categories', 'tags', 'zielgruppe', 'Keywords'] as const).map((field) => (
             <div key={field} className="flex flex-col gap-1">
-              <label className="text-sm font-medium">
-                {field === 'Keywords' ? 'Keywords' : field.charAt(0).toUpperCase() + field.slice(1)} (kommagetrennt)
-              </label>
+              {renderLabel(
+                `${field === 'Keywords' ? 'Keywords' : field.charAt(0).toUpperCase() + field.slice(1)} (kommagetrennt)`,
+                isFrontmatterFieldDefault(field),
+              )}
               <input
                 className="rounded-md border border-input bg-background px-3 py-2 text-sm"
                 value={listToInput(frontmatter[field])}
@@ -597,9 +647,7 @@ function App() {
             <h2 className="text-xl font-semibold">Body (Markdown inkl. Shortcodes)</h2>
             <p className="text-sm text-muted-foreground">Hier entsteht der Artikeltext. Shortcodes lassen sich unten per Klick einfügen.</p>
           </div>
-          <span className={`text-xs font-semibold ${modifiedBody ? 'text-emerald-600' : 'text-muted-foreground'}`}>
-            {modifiedBody ? 'Eigene Eingaben' : 'Beispieldaten aktiv'}
-          </span>
+          <FieldBadge isDefault={isBodyDefault} />
         </div>
         <textarea
           className="mt-4 min-h-[280px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
@@ -656,9 +704,7 @@ function App() {
             <h2 className="text-xl font-semibold">Shortcodes</h2>
             <p className="text-sm text-muted-foreground">Space, Charts und Tabellen konfigurieren – per Klick in den Body übernehmen.</p>
           </div>
-          <span className={`text-xs font-semibold ${modifiedShortcodes ? 'text-emerald-600' : 'text-muted-foreground'}`}>
-            {modifiedShortcodes ? 'Eigene Eingaben' : 'Beispieldaten aktiv'}
-          </span>
+          <FieldBadge isDefault={areShortcodesDefault} />
           <div className="flex flex-wrap gap-2">
             <button className="rounded-md border border-input px-3 py-2 text-sm" type="button" onClick={() => addShortcode('space')}>
               Space
@@ -914,9 +960,7 @@ function App() {
               Monat eintragen, Zahlen ergänzen, dann in monatly.toml übernehmen.
             </p>
           </div>
-          <span className={`text-xs font-semibold ${modifiedMonthly ? 'text-emerald-600' : 'text-muted-foreground'}`}>
-            {modifiedMonthly ? 'Eigene Eingaben' : 'Beispieldaten aktiv'}
-          </span>
+          <FieldBadge isDefault={areMonthlyDefault} />
           <div className="flex gap-2">
             <button
               className="rounded-md border border-input px-3 py-2 text-sm"
@@ -929,7 +973,7 @@ function App() {
         </div>
         <div className="mt-4 grid gap-4 md:grid-cols-2">
           <div className="flex flex-col gap-1">
-            <label className="text-sm font-medium">Monat (YYYY-MM)</label>
+            {renderLabel('Monat (YYYY-MM)', isMonthlyTextDefault('month'))}
             <input
               className="rounded-md border border-input bg-background px-3 py-2 text-sm"
               value={monthlyEntry.month}
@@ -937,7 +981,7 @@ function App() {
             />
           </div>
           <div className="flex flex-col gap-1">
-            <label className="text-sm font-medium">Label (z. B. Dezember 2025)</label>
+            {renderLabel('Label (z. B. Dezember 2025)', isMonthlyTextDefault('label'))}
             <input
               className="rounded-md border border-input bg-background px-3 py-2 text-sm"
               value={monthlyEntry.label}
@@ -949,14 +993,14 @@ function App() {
           <div className="rounded-md border border-dashed border-border p-4">
             <h3 className="text-sm font-semibold">IT Aggregate</h3>
             <div className="mt-2 grid gap-2">
-              <label className="text-xs uppercase text-muted-foreground">Arbeitslos</label>
+              {renderLabel('Arbeitslos', isMonthlyNumberDefault('itAggregate', 'unemployed'))}
               <input
                 type="number"
                 className="rounded-md border border-input bg-background px-3 py-2 text-sm"
                 value={monthlyEntry.itAggregate.unemployed ?? ''}
                 onChange={handleMonthlyNumbers('itAggregate', 'unemployed')}
               />
-              <label className="text-xs uppercase text-muted-foreground">Suchend</label>
+              {renderLabel('Suchend', isMonthlyNumberDefault('itAggregate', 'seeking'))}
               <input
                 type="number"
                 className="rounded-md border border-input bg-background px-3 py-2 text-sm"
@@ -967,7 +1011,7 @@ function App() {
           </div>
           <div className="rounded-md border border-dashed border-border p-4">
             <h3 className="text-sm font-semibold">IT Jobs (gesamt)</h3>
-            <label className="text-xs uppercase text-muted-foreground">Neue IT Jobs</label>
+            {renderLabel('Neue IT Jobs', isMonthlyNumberDefault('itJobs', 'it_jobs'))}
             <input
               type="number"
               className="rounded-md border border-input bg-background px-3 py-2 text-sm"
@@ -979,13 +1023,14 @@ function App() {
             <h3 className="text-sm font-semibold">Deutschland gesamt</h3>
             {(['unemployed', 'seeking', 'jobs'] as const).map((field) => (
               <div key={field} className="mt-2">
-                <label className="text-xs uppercase text-muted-foreground">
-                  {field === 'unemployed'
+                {renderLabel(
+                  field === 'unemployed'
                     ? 'Arbeitslose'
                     : field === 'seeking'
                     ? 'Suchend'
-                    : 'Jobs'}
-                </label>
+                    : 'Jobs',
+                  isMonthlyNumberDefault('germany', field),
+                )}
                 <input
                   type="number"
                   className="rounded-md border border-input bg-background px-3 py-2 text-sm"
@@ -997,21 +1042,21 @@ function App() {
           </div>
           <div className="rounded-md border border-dashed border-border p-4">
             <h3 className="text-sm font-semibold">IT Infrastruktur</h3>
-            <label className="text-xs uppercase text-muted-foreground">Arbeitslos</label>
+            {renderLabel('Arbeitslos', isMonthlyNumberDefault('infraAggregate', 'unemployed'))}
             <input
               type="number"
               className="rounded-md border border-input bg-background px-3 py-2 text-sm"
               value={monthlyEntry.infraAggregate.unemployed ?? ''}
               onChange={handleMonthlyNumbers('infraAggregate', 'unemployed')}
             />
-            <label className="text-xs uppercase text-muted-foreground mt-2">Suchend</label>
+            {renderLabel('Suchend', isMonthlyNumberDefault('infraAggregate', 'seeking'))}
             <input
               type="number"
               className="rounded-md border border-input bg-background px-3 py-2 text-sm"
               value={monthlyEntry.infraAggregate.seeking ?? ''}
               onChange={handleMonthlyNumbers('infraAggregate', 'seeking')}
             />
-            <label className="text-xs uppercase text-muted-foreground mt-2">Neue Jobs</label>
+            {renderLabel('Neue Jobs', isMonthlyNumberDefault('infraJobs', 'it_jobs'))}
             <input
               type="number"
               className="rounded-md border border-input bg-background px-3 py-2 text-sm"
@@ -1021,21 +1066,21 @@ function App() {
           </div>
           <div className="rounded-md border border-dashed border-border p-4">
             <h3 className="text-sm font-semibold">Softwareentwicklung</h3>
-            <label className="text-xs uppercase text-muted-foreground">Arbeitslos</label>
+            {renderLabel('Arbeitslos', isMonthlyNumberDefault('softwareAggregate', 'unemployed'))}
             <input
               type="number"
               className="rounded-md border border-input bg-background px-3 py-2 text-sm"
               value={monthlyEntry.softwareAggregate.unemployed ?? ''}
               onChange={handleMonthlyNumbers('softwareAggregate', 'unemployed')}
             />
-            <label className="text-xs uppercase text-muted-foreground mt-2">Suchend</label>
+            {renderLabel('Suchend', isMonthlyNumberDefault('softwareAggregate', 'seeking'))}
             <input
               type="number"
               className="rounded-md border border-input bg-background px-3 py-2 text-sm"
               value={monthlyEntry.softwareAggregate.seeking ?? ''}
               onChange={handleMonthlyNumbers('softwareAggregate', 'seeking')}
             />
-            <label className="text-xs uppercase text-muted-foreground mt-2">Neue Jobs</label>
+            {renderLabel('Neue Jobs', isMonthlyNumberDefault('softwareJobs', 'it_jobs'))}
             <input
               type="number"
               className="rounded-md border border-input bg-background px-3 py-2 text-sm"
