@@ -1,6 +1,30 @@
 # Blogposter – Kurz-Anleitung
 
-## Wichtigste Befehle (immer zuerst)
+## Schnellstart (Reihenfolge)
+
+1. **Repo klonen (falls nötig)**
+   ```bash
+   git clone https://github.com/bronkstar/blogposter.git
+   cd blogposter
+   ```
+   Wenn das Repo schon lokal liegt: `git pull`, um den aktuellen Stand zu holen.
+2. **Frontend installieren**
+   ```bash
+   npm --prefix frontend install
+   ```
+3. **Entwicklungsserver starten**
+   ```bash
+   npm --prefix frontend run dev
+   ```
+   Browser: `http://localhost:5173`.
+4. **Sprint-Konzept prüfen**
+   - Datei `docs/konzepte_fuer_architekturen/20251222-blogposter-sprint-01.md` lesen.
+   - Offene Fragen + nächste Phase checken.
+5. **Phase starten**
+   - Mit mir kurz abstimmen, welche Phase dran ist (z. B. Schema & Parser).
+   - Danach Schritt für Schritt umsetzen & nach jedem Teilcommit fragen.
+
+## Wichtigste Befehle (Nachschlagewerk)
 
 1. **Einmalig installieren**
    ```bash
