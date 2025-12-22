@@ -243,6 +243,10 @@ function App() {
   const [shortcodes, setShortcodes] = useState<Shortcode[]>(loadShortcodesFromStorage);
   const [body, setBody] = useState<string>(defaultBody);
   const [monthlyEntry, setMonthlyEntry] = useState<MonthlyEntry>(deriveMonthlyDefaults());
+  const [modifiedFrontmatter, setModifiedFrontmatter] = useState(false);
+  const [modifiedBody, setModifiedBody] = useState(false);
+  const [modifiedShortcodes, setModifiedShortcodes] = useState(false);
+  const [modifiedMonthly, setModifiedMonthly] = useState(false);
 
   useEffect(() => {
     setFrontmatter(loadFrontmatterFromStorage());
@@ -298,6 +302,7 @@ function App() {
         ...prev,
         [field]: value,
       }));
+      setModifiedFrontmatter(true);
     };
 
   const handleArrayFieldChange =
@@ -307,6 +312,7 @@ function App() {
           ...prev,
           [field]: inputToList(event.target.value),
         }));
+      setModifiedFrontmatter(true);
       };
 
   const updateFaqEntry = (index: number, patch: Partial<FaqEntry>) => {
@@ -315,6 +321,7 @@ function App() {
       copy[index] = { ...copy[index], ...patch };
       return { ...prev, faq: copy };
     });
+    setModifiedFrontmatter(true);
   };
 
   const addFaqEntry = () => {
@@ -322,6 +329,7 @@ function App() {
       ...prev,
       faq: [...prev.faq, { question: '', answer: '' }],
     }));
+    setModifiedFrontmatter(true);
   };
 
   const removeFaqEntry = (index: number) => {
@@ -329,23 +337,28 @@ function App() {
       ...prev,
       faq: prev.faq.filter((_, idx) => idx !== index),
     }));
+    setModifiedFrontmatter(true);
   };
 
   const addShortcode = (type: Shortcode['type']) => {
     setShortcodes((prev) => [...prev, createDefaultShortcode(type)]);
+    setModifiedShortcodes(true);
   };
 
   const updateShortcode = (index: number, nextValue: Shortcode) => {
     setShortcodes((prev) => prev.map((item, idx) => (idx === index ? nextValue : item)));
+    setModifiedShortcodes(true);
   };
 
   const removeShortcode = (index: number) => {
     setShortcodes((prev) => prev.filter((_, idx) => idx !== index));
+    setModifiedShortcodes(true);
   };
 
   const insertShortcodeIntoBody = (shortcode: Shortcode) => {
     const template = formatShortcode(shortcode);
     setBody((prev) => (prev ? `${prev.trim()}\n\n${template}\n` : `${template}\n`));
+    setModifiedBody(true);
   };
 
   const handleDownload = () => {
@@ -376,6 +389,7 @@ function App() {
         ...prev,
         [field]: value,
       }));
+      setModifiedMonthly(true);
     };
 
   const handleMonthlyNumbers =
@@ -399,6 +413,7 @@ function App() {
           [key]: numeric,
         },
       }));
+      setModifiedMonthly(true);
     };
 
   const monthlySnippet = useMemo(
@@ -408,16 +423,37 @@ function App() {
 
   return (
     <main className="mx-auto max-w-6xl space-y-10 px-4 py-10">
-      <header className="space-y-2">
-        <p className="text-sm uppercase tracking-wider text-muted-foreground">Sprint 01</p>
-        <h1 className="text-3xl font-semibold text-foreground">Blogposter – Formulareingabe</h1>
-        <p className="text-base text-muted-foreground">
-          Metadaten, Body-Text, FAQ und Shortcodes auf einen Blick. Alles wird geprüft und lokal gespeichert.
-        </p>
+      <header className="space-y-4">
+        <div>
+          <p className="text-sm uppercase tracking-wider text-muted-foreground">Sprint 01</p>
+          <h1 className="text-3xl font-semibold text-foreground">Blogposter – Formulareingabe</h1>
+          <p className="text-base text-muted-foreground">
+            Metadaten, Body-Text, FAQ und Shortcodes auf einen Blick. Alles wird geprüft und lokal gespeichert.
+          </p>
+        </div>
+        <ul className="flex flex-wrap gap-6 text-sm">
+          <li className={modifiedFrontmatter ? 'text-foreground' : 'text-muted-foreground'}>
+            {modifiedFrontmatter ? '✅ Metadaten bearbeitet' : '⚠️ Metadaten noch Beispiel'}
+          </li>
+          <li className={modifiedBody ? 'text-foreground' : 'text-muted-foreground'}>
+            {modifiedBody ? '✅ Body bearbeitet' : '⚠️ Body noch Beispiel'}
+          </li>
+          <li className={modifiedShortcodes ? 'text-foreground' : 'text-muted-foreground'}>
+            {modifiedShortcodes ? '✅ Shortcodes bearbeitet' : '⚠️ Shortcodes noch Beispiel'}
+          </li>
+          <li className={modifiedMonthly ? 'text-foreground' : 'text-muted-foreground'}>
+            {modifiedMonthly ? '✅ Monatsdaten bearbeitet' : '⚠️ Monatsdaten noch Beispiel'}
+          </li>
+        </ul>
       </header>
 
       <section className="rounded-lg border border-border bg-card p-6 shadow-sm">
-        <h2 className="text-xl font-semibold">Metadaten</h2>
+        <div className="flex items-center justify-between gap-4">
+          <h2 className="text-xl font-semibold">Metadaten</h2>
+          <span className={`text-xs font-semibold ${modifiedFrontmatter ? 'text-emerald-600' : 'text-muted-foreground'}`}>
+            {modifiedFrontmatter ? 'Eigene Eingaben' : 'Beispieldaten aktiv'}
+          </span>
+        </div>
         <div className="mt-4 grid gap-4 md:grid-cols-2">
           <div className="flex flex-col gap-1">
             <label className="text-sm font-medium">Titel</label>
@@ -561,7 +597,9 @@ function App() {
             <h2 className="text-xl font-semibold">Body (Markdown inkl. Shortcodes)</h2>
             <p className="text-sm text-muted-foreground">Hier entsteht der Artikeltext. Shortcodes lassen sich unten per Klick einfügen.</p>
           </div>
-          <span className="text-sm text-muted-foreground">{body.length} Zeichen</span>
+          <span className={`text-xs font-semibold ${modifiedBody ? 'text-emerald-600' : 'text-muted-foreground'}`}>
+            {modifiedBody ? 'Eigene Eingaben' : 'Beispieldaten aktiv'}
+          </span>
         </div>
         <textarea
           className="mt-4 min-h-[280px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
@@ -618,6 +656,9 @@ function App() {
             <h2 className="text-xl font-semibold">Shortcodes</h2>
             <p className="text-sm text-muted-foreground">Space, Charts und Tabellen konfigurieren – per Klick in den Body übernehmen.</p>
           </div>
+          <span className={`text-xs font-semibold ${modifiedShortcodes ? 'text-emerald-600' : 'text-muted-foreground'}`}>
+            {modifiedShortcodes ? 'Eigene Eingaben' : 'Beispieldaten aktiv'}
+          </span>
           <div className="flex flex-wrap gap-2">
             <button className="rounded-md border border-input px-3 py-2 text-sm" type="button" onClick={() => addShortcode('space')}>
               Space
@@ -873,6 +914,9 @@ function App() {
               Monat eintragen, Zahlen ergänzen, dann in monatly.toml übernehmen.
             </p>
           </div>
+          <span className={`text-xs font-semibold ${modifiedMonthly ? 'text-emerald-600' : 'text-muted-foreground'}`}>
+            {modifiedMonthly ? 'Eigene Eingaben' : 'Beispieldaten aktiv'}
+          </span>
           <div className="flex gap-2">
             <button
               className="rounded-md border border-input px-3 py-2 text-sm"
