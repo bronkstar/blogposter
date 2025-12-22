@@ -1,0 +1,746 @@
+## Aggregated IT market: unemployed + seeking by month (label in German)
+# Note: Entries are kept newest-first for readability; shortcode sorts anyway.
+
+[[it_aggregate]]
+month = "2025-11"
+label = "November 2025"
+unemployed = 56909
+seeking = 89416
+
+[[it_aggregate]]
+month = "2025-10"
+label = "Oktober 2025"
+unemployed = 57375
+seeking = 87941
+
+[[it_aggregate]]
+month = "2025-09"
+label = "September 2025"
+unemployed = 57665
+seeking = 87556
+
+[[it_aggregate]]
+month = "2025-08"
+label = "August 2025"
+unemployed = 58288
+seeking = 87684
+
+[[it_aggregate]]
+month = "2025-07"
+label = "Juli 2025"
+unemployed = 57267
+seeking = 86494
+
+[[it_aggregate]]
+month = "2025-06"
+label = "Juni 2025"
+unemployed = 53404
+seeking = 83990
+
+[[it_aggregate]]
+month = "2025-05"
+label = "Mai 2025"
+unemployed = 52373
+seeking = 82174
+
+[[it_aggregate]]
+month = "2025-04"
+label = "April 2025"
+unemployed = 51865
+seeking = 81599
+
+[[it_aggregate]]
+month = "2025-03"
+label = "März 2025"
+unemployed = 50973
+seeking = 80580
+
+[[it_aggregate]]
+month = "2025-02"
+label = "Februar 2025"
+unemployed = 50125
+seeking = 79155
+
+[[it_aggregate]]
+month = "2025-01"
+label = "Januar 2025"
+unemployed = 49338
+seeking = 77444
+
+[[it_aggregate]]
+month = "2024-12"
+label = "Dezember 2024"
+unemployed = 46293
+seeking = 77330
+
+[[it_aggregate]]
+month = "2024-11"
+label = "November 2024"
+unemployed = 45705
+seeking = 75579
+
+[[it_aggregate]]
+month = "2024-10"
+label = "Oktober 2024"
+unemployed = 45828
+seeking = 74168
+
+[[it_aggregate]]
+month = "2024-09"
+label = "September 2024"
+unemployed = 45951
+seeking = 73526
+
+[[it_aggregate]]
+month = "2024-08"
+label = "August 2024"
+unemployed = 46527
+seeking = 74126
+
+[[it_aggregate]]
+month = "2024-07"
+label = "Juli 2024"
+unemployed = 45042
+seeking = 72913
+
+[[it_aggregate]]
+month = "2024-06"
+label = "Juni 2024"
+unemployed = 42070
+seeking = 70836
+
+[[it_aggregate]]
+month = "2024-05"
+label = "Mai 2024"
+unemployed = 40615
+seeking = 68362
+
+[[it_aggregate]]
+month = "2024-04"
+label = "April 2024"
+unemployed = 40057
+seeking = 66935
+
+
+## New IT jobs reported by month
+# Newest-first order for readability
+
+[[it_jobs]]
+month = "2025-11"
+label = "November 2025"
+it_jobs = 11668
+
+[[it_jobs]]
+month = "2025-10"
+label = "Oktober 2025"
+it_jobs = 11736
+
+[[it_jobs]]
+month = "2025-09"
+label = "September 2025"
+it_jobs = 11942
+
+[[it_jobs]]
+month = "2025-08"
+label = "August 2025"
+it_jobs = 12319
+
+[[it_jobs]]
+month = "2025-07"
+label = "Juli 2025"
+it_jobs = 12279
+
+[[it_jobs]]
+month = "2025-06"
+label = "Juni 2025"
+it_jobs = 12964
+
+[[it_jobs]]
+month = "2025-05"
+label = "Mai 2025"
+it_jobs = 13135
+
+[[it_jobs]]
+month = "2025-04"
+label = "April 2025"
+it_jobs = 13923
+
+[[it_jobs]]
+month = "2025-03"
+label = "März 2025"
+it_jobs = 14047
+
+[[it_jobs]]
+month = "2025-02"
+label = "Februar 2025"
+it_jobs = 13908
+
+[[it_jobs]]
+month = "2025-01"
+label = "Januar 2025"
+it_jobs = 13515
+
+[[it_jobs]]
+month = "2024-12"
+label = "Dezember 2024"
+it_jobs = 14154
+
+[[it_jobs]]
+month = "2024-11"
+label = "November 2024"
+it_jobs = 14450
+
+[[it_jobs]]
+month = "2024-10"
+label = "Oktober 2024"
+it_jobs = 14910
+
+[[it_jobs]]
+month = "2024-09"
+label = "September 2024"
+it_jobs = 15373
+
+[[it_jobs]]
+month = "2024-08"
+label = "August 2024"
+it_jobs = 16054
+
+[[it_jobs]]
+month = "2024-07"
+label = "Juli 2024"
+it_jobs = 16344
+
+[[it_jobs]]
+month = "2024-06"
+label = "Juni 2024"
+it_jobs = 16491
+
+[[it_jobs]]
+month = "2024-05"
+label = "Mai 2024"
+it_jobs = 16909
+
+[[it_jobs]]
+month = "2024-04"
+label = "April 2024"
+it_jobs = 17180
+
+
+## Germany overall market (only months used in compare tables)
+# Newest-first order for readability
+
+[[germany]]
+month = "2025-11"
+label = "11/25"
+unemployed = 2885087
+seeking = 4625403
+jobs = 623934
+
+[[germany]]
+month = "2025-10"
+label = "10/25"
+unemployed = 2910752
+seeking = 4616400
+jobs = 623202
+
+[[germany]]
+month = "2025-09"
+label = "09/25"
+unemployed = 2954747
+seeking = 4610932
+jobs = 629638
+
+[[germany]]
+month = "2025-08"
+label = "08/25"
+unemployed = 3025136
+seeking = 4674742
+jobs = 631058
+
+[[germany]]
+month = "2025-07"
+label = "07/25"
+unemployed = 2979486
+seeking = 4643574
+jobs = 628056
+
+[[germany]]
+month = "2024-11"
+label = "11/24"
+unemployed = 2774028
+seeking = 4589481
+jobs = 667713
+
+[[germany]]
+month = "2024-10"
+label = "10/24"
+unemployed = 2790529
+seeking = 4572534
+jobs = 688742
+
+[[germany]]
+month = "2024-08"
+label = "08/24"
+unemployed = 2871913
+seeking = 4615877
+jobs = 698868
+
+[[germany]]
+month = "2024-07"
+label = "07/24"
+unemployed = 2808720
+seeking = 4581507
+jobs = 703119
+
+
+## IT-Infrastruktur (Beispieldaten, neu)
+# Arbeitslose & Suchende
+
+[[infra_aggregate]]
+month = "2025-11"
+label = "November 2025"
+unemployed = 14492
+seeking = 22965
+
+[[infra_aggregate]]
+month = "2025-10"
+label = "Oktober 2025"
+unemployed = 14485
+seeking = 22365
+
+[[infra_aggregate]]
+month = "2025-09"
+label = "September 2025"
+unemployed = 14216
+seeking = 21985
+
+[[infra_aggregate]]
+month = "2025-08"
+label = "August 2025"
+unemployed = 14287
+seeking = 21826
+
+[[infra_aggregate]]
+month = "2025-07"
+label = "Juli 2025"
+unemployed = 14029
+seeking = 21519
+
+[[infra_aggregate]]
+month = "2025-06"
+label = "Juni 2025"
+unemployed = 13507
+seeking = 21162
+
+[[infra_aggregate]]
+month = "2025-05"
+label = "Mai 2025"
+unemployed = 13205
+seeking = 20798
+
+[[infra_aggregate]]
+month = "2025-04"
+label = "April 2025"
+unemployed = 13047
+seeking = 20663
+
+[[infra_aggregate]]
+month = "2025-03"
+label = "März 2025"
+unemployed = 12777
+seeking = 20459
+
+[[infra_aggregate]]
+month = "2025-02"
+label = "Februar 2025"
+unemployed = 12365
+seeking = 20040
+
+[[infra_aggregate]]
+month = "2025-01"
+label = "Januar 2025"
+unemployed = 12408
+seeking = 19688
+
+[[infra_aggregate]]
+month = "2024-12"
+label = "Dezember 2024"
+unemployed = 11621
+seeking = 19708
+
+[[infra_aggregate]]
+month = "2024-11"
+label = "November 2024"
+unemployed = 11490
+seeking = 19333
+
+[[infra_aggregate]]
+month = "2024-10"
+label = "Oktober 2024"
+unemployed = 11440
+seeking = 18903
+
+[[infra_aggregate]]
+month = "2024-09"
+label = "September 2024"
+unemployed = 11405
+seeking = 18559
+
+[[infra_aggregate]]
+month = "2024-08"
+label = "August 2024"
+unemployed = 11381
+seeking = 18599
+
+[[infra_aggregate]]
+month = "2024-07"
+label = "Juli 2024"
+unemployed = 10930
+seeking = 18162
+
+[[infra_aggregate]]
+month = "2024-06"
+label = "Juni 2024"
+unemployed = 10537
+seeking = 17786
+
+[[infra_aggregate]]
+month = "2024-05"
+label = "Mai 2024"
+unemployed = 10251
+seeking = 17322
+
+[[infra_aggregate]]
+month = "2024-04"
+label = "April 2024"
+unemployed = 10056
+seeking = 17000
+
+# IT-Jobs
+
+[[infra_jobs]]
+month = "2025-11"
+label = "November 2026"
+it_jobs = 2740
+
+[[infra_jobs]]
+month = "2025-10"
+label = "Oktober 2025"
+it_jobs = 2800
+
+[[infra_jobs]]
+month = "2025-09"
+label = "September 2025"
+it_jobs = 2872
+
+[[infra_jobs]]
+month = "2025-08"
+label = "August 2025"
+it_jobs = 2941
+
+[[infra_jobs]]
+month = "2025-07"
+label = "Juli 2025"
+it_jobs = 2948
+
+[[infra_jobs]]
+month = "2025-06"
+label = "Juni 2025"
+it_jobs = 3199
+
+[[infra_jobs]]
+month = "2025-05"
+label = "Mai 2025"
+it_jobs = 3272
+
+[[infra_jobs]]
+month = "2025-04"
+label = "April 2025"
+it_jobs = 3497
+
+[[infra_jobs]]
+month = "2025-03"
+label = "März 2025"
+it_jobs = 3501
+
+[[infra_jobs]]
+month = "2025-02"
+label = "Februar 2025"
+it_jobs = 3390
+
+[[infra_jobs]]
+month = "2025-01"
+label = "Januar 2025"
+it_jobs = 3358
+
+[[infra_jobs]]
+month = "2024-12"
+label = "Dezember 2024"
+it_jobs = 3430
+
+[[infra_jobs]]
+month = "2024-11"
+label = "November 2024"
+it_jobs = 3627
+
+[[infra_jobs]]
+month = "2024-10"
+label = "Oktober 2024"
+it_jobs = 3721
+
+[[infra_jobs]]
+month = "2024-09"
+label = "September 2024"
+it_jobs = 3815
+
+[[infra_jobs]]
+month = "2024-08"
+label = "August 2024"
+it_jobs = 3886
+
+[[infra_jobs]]
+month = "2024-07"
+label = "Juli 2024"
+it_jobs = 3963
+
+[[infra_jobs]]
+month = "2024-06"
+label = "Juni 2024"
+it_jobs = 4096
+
+[[infra_jobs]]
+month = "2024-05"
+label = "Mai 2024"
+it_jobs = 4096
+
+[[infra_jobs]]
+month = "2024-04"
+label = "April 2024"
+it_jobs = 4022
+
+
+
+## Softwareentwicklung (Beispieldaten, neu)
+# Arbeitslose & Suchende
+
+[[software_aggregate]]
+month = "2025-11"
+label = "November 2025"
+unemployed = 18842
+seeking = 29596
+
+[[software_aggregate]]
+month = "2025-10"
+label = "Oktober 2025"
+unemployed = 19076
+seeking = 29252
+
+[[software_aggregate]]
+month = "2025-09"
+label = "September 2025"
+unemployed = 19284
+seeking = 29175
+
+[[software_aggregate]]
+month = "2025-08"
+label = "August 2025"
+unemployed = 19474
+seeking = 29416
+
+[[software_aggregate]]
+month = "2025-07"
+label = "Juli 2025"
+unemployed = 19119
+seeking = 29006
+
+[[software_aggregate]]
+month = "2025-06"
+label = "Juni 2025"
+unemployed = 17690
+seeking = 28078
+
+[[software_aggregate]]
+month = "2025-05"
+label = "Mai 2025"
+unemployed = 17294
+seeking = 27343
+
+[[software_aggregate]]
+month = "2025-04"
+label = "April 2025"
+unemployed = 17131
+seeking = 27114
+
+[[software_aggregate]]
+month = "2025-03"
+label = "März 2025"
+unemployed = 16828
+seeking = 26732
+
+[[software_aggregate]]
+month = "2025-02"
+label = "Februar 2025"
+unemployed = 16564
+seeking = 26187
+
+[[software_aggregate]]
+month = "2025-01"
+label = "Januar 2025"
+unemployed = 16184
+seeking = 25597
+
+[[software_aggregate]]
+month = "2024-12"
+label = "Dezember 2024"
+unemployed = 15188
+seeking = 25465
+
+[[software_aggregate]]
+month = "2024-11"
+label = "November 2024"
+unemployed = 14798
+seeking = 24628
+
+[[software_aggregate]]
+month = "2024-10"
+label = "Oktober 2024"
+unemployed = 14931
+seeking = 24183
+
+[[software_aggregate]]
+month = "2024-09"
+label = "September 2024"
+unemployed = 15019
+seeking = 24108
+
+[[software_aggregate]]
+month = "2024-08"
+label = "August 2024"
+unemployed = 15147
+seeking = 24262
+
+[[software_aggregate]]
+month = "2024-07"
+label = "Juli 2024"
+unemployed = 14565
+seeking = 23780
+
+[[software_aggregate]]
+month = "2024-06"
+label = "Juni 2024"
+unemployed = 13428
+seeking = 22953
+
+[[software_aggregate]]
+month = "2024-05"
+label = "Mai 2024"
+unemployed = 12884
+seeking = 21896
+
+[[software_aggregate]]
+month = "2024-04"
+label = "April 2024"
+unemployed = 12534
+seeking = 21414
+
+# IT-Jobs Softwareentwicklung
+
+[[software_jobs]]
+month = "2025-11"
+label = "November 2025"
+it_jobs = 1856
+
+[[software_jobs]]
+month = "2025-10"
+label = "Oktober 2025"
+it_jobs = 1859
+
+[[software_jobs]]
+month = "2025-09"
+label = "September 2025"
+it_jobs = 1902
+
+[[software_jobs]]
+month = "2025-08"
+label = "August 2025"
+it_jobs = 2014
+
+[[software_jobs]]
+month = "2025-07"
+label = "Juli 2025"
+it_jobs = 2016
+
+[[software_jobs]]
+month = "2025-06"
+label = "Juni 2025"
+it_jobs = 2113
+
+[[software_jobs]]
+month = "2025-05"
+label = "Mai 2025"
+it_jobs = 2147
+
+[[software_jobs]]
+month = "2025-04"
+label = "April 2025"
+it_jobs = 2147
+
+[[software_jobs]]
+month = "2025-03"
+label = "März 2025"
+it_jobs = 2277
+
+[[software_jobs]]
+month = "2025-02"
+label = "Februar 2025"
+it_jobs = 2283
+
+[[software_jobs]]
+month = "2025-01"
+label = "Januar 2025"
+it_jobs = 2268
+
+[[software_jobs]]
+month = "2024-12"
+label = "Dezember 2024"
+it_jobs = 2379
+
+[[software_jobs]]
+month = "2024-11"
+label = "November 2024"
+it_jobs = 2385
+
+[[software_jobs]]
+month = "2024-10"
+label = "Oktober 2024"
+it_jobs = 2481
+
+[[software_jobs]]
+month = "2024-09"
+label = "September 2024"
+it_jobs = 2563
+
+[[software_jobs]]
+month = "2024-08"
+label = "August 2024"
+it_jobs = 2680
+
+[[software_jobs]]
+month = "2024-07"
+label = "Juli 2024"
+it_jobs = 2774
+
+[[software_jobs]]
+month = "2024-06"
+label = "Juni 2024"
+it_jobs = 2891
+
+[[software_jobs]]
+month = "2024-05"
+label = "Mai 2024"
+it_jobs = 2891
+
+[[software_jobs]]
+month = "2024-04"
+label = "April 2024"
+it_jobs = 2959

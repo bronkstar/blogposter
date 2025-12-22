@@ -1,0 +1,11 @@
+node_modules/
+dist/
+.vite/
+.turbo/
+coverage/
+.env
+.env.*
+*.log
+.DS_Store
+__pycache__/
+.venv/
