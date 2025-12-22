@@ -15,4 +15,7 @@ export default defineConfig({
       allow: [path.resolve(__dirname, '..')],
     },
   },
+  define: {
+    global: 'globalThis',
+  },
 });

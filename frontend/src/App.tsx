@@ -5,6 +5,7 @@ import { serializeFrontmatter } from './lib/parsers/frontmatter';
 import { parseMonthlyToml } from './lib/parsers/monthly';
 import {
   defaultFrontmatter,
+  defaultBody,
   frontmatterSchema,
   type FaqEntry,
   type Frontmatter,
@@ -15,8 +16,28 @@ import { shortcodeSchema } from './lib/schemas/shortcodes';
 const FRONTMATTER_STORAGE_KEY = 'blogposter.frontmatter.v1';
 const SHORTCODES_STORAGE_KEY = 'blogposter.shortcodes.v1';
 const BODY_STORAGE_KEY = 'blogposter.body.v1';
+const MONTHLY_ENTRY_STORAGE_KEY = 'blogposter.monthly-entry.v1';
 
 const monthlyDataset = parseMonthlyToml(monthlyTomlSource);
+
+type MonthlyCategoryNumbers = {
+  unemployed?: number;
+  seeking?: number;
+  jobs?: number;
+  it_jobs?: number;
+};
+
+type MonthlyEntry = {
+  month: string;
+  label: string;
+  itAggregate: MonthlyCategoryNumbers;
+  itJobs: { it_jobs?: number };
+  germany: MonthlyCategoryNumbers;
+  infraAggregate: MonthlyCategoryNumbers;
+  infraJobs: { it_jobs?: number };
+  softwareAggregate: MonthlyCategoryNumbers;
+  softwareJobs: { it_jobs?: number };
+};
 
 const createDefaultShortcode = (type: Shortcode['type']): Shortcode => {
   if (type === 'space') {
@@ -42,14 +63,14 @@ const createDefaultShortcode = (type: Shortcode['type']): Shortcode => {
 };
 
 const loadFrontmatterFromStorage = (): Frontmatter => {
-  if (typeof window === 'undefined') return defaultFrontmatter();
+  if (typeof window === 'undefined') return defaultFrontmatter;
   const raw = window.localStorage.getItem(FRONTMATTER_STORAGE_KEY);
-  if (!raw) return defaultFrontmatter();
+  if (!raw) return defaultFrontmatter;
   try {
     const parsed = JSON.parse(raw);
     return frontmatterSchema.parse(parsed);
   } catch {
-    return defaultFrontmatter();
+    return defaultFrontmatter;
   }
 };
 
@@ -72,8 +93,56 @@ const loadShortcodesFromStorage = (): Shortcode[] => {
 };
 
 const loadBodyFromStorage = (): string => {
-  if (typeof window === 'undefined') return '';
-  return window.localStorage.getItem(BODY_STORAGE_KEY) ?? '';
+  if (typeof window === 'undefined') return defaultBody;
+  return window.localStorage.getItem(BODY_STORAGE_KEY) ?? defaultBody;
+};
+
+const deriveMonthlyDefaults = (): MonthlyEntry => {
+  const latestMonth = monthlyDataset.it_aggregate[0];
+  return {
+    month: latestMonth?.month ?? '2025-11',
+    label: latestMonth?.label ?? 'November 2025',
+    itAggregate: {
+      unemployed: latestMonth?.unemployed,
+      seeking: latestMonth?.seeking,
+    },
+    itJobs: {
+      it_jobs: monthlyDataset.it_jobs[0]?.it_jobs,
+    },
+    germany: {
+      unemployed: monthlyDataset.germany[0]?.unemployed,
+      seeking: monthlyDataset.germany[0]?.seeking,
+      jobs: monthlyDataset.germany[0]?.jobs,
+    },
+    infraAggregate: {
+      unemployed: monthlyDataset.infra_aggregate[0]?.unemployed,
+      seeking: monthlyDataset.infra_aggregate[0]?.seeking,
+    },
+    infraJobs: {
+      it_jobs: monthlyDataset.infra_jobs[0]?.it_jobs,
+    },
+    softwareAggregate: {
+      unemployed: monthlyDataset.software_aggregate[0]?.unemployed,
+      seeking: monthlyDataset.software_aggregate[0]?.seeking,
+    },
+    softwareJobs: {
+      it_jobs: monthlyDataset.software_jobs[0]?.it_jobs,
+    },
+  };
+};
+
+const monthlyDefaultsPreset = deriveMonthlyDefaults();
+
+const loadMonthlyEntryFromStorage = (): MonthlyEntry => {
+  if (typeof window === 'undefined') return monthlyDefaultsPreset;
+  const raw = window.localStorage.getItem(MONTHLY_ENTRY_STORAGE_KEY);
+  if (!raw) return monthlyDefaultsPreset;
+  try {
+    const parsed: MonthlyEntry = JSON.parse(raw);
+    return parsed;
+  } catch {
+    return deriveMonthlyDefaults();
+  }
 };
 
 const listToInput = (value: string[]) => value.join(', ');
@@ -93,10 +162,16 @@ const formatShortcode = (shortcode: Shortcode): string => {
     case 'space':
       return '{{< space >}}';
     case 'chart_itmarket_all': {
-      const base = `{{< chart_itmarket_all from="${shortcode.from}" to="${shortcode.to}" width="${shortcode.width}" height="${shortcode.height}" title="${shortcode.title}"`;
-      const agg = shortcode.aggKey ? ` aggKey="${shortcode.aggKey}"` : '';
-      const jobs = shortcode.jobsKey ? ` jobsKey="${shortcode.jobsKey}"` : '';
-      return `${base}${agg}${jobs} >}}`;
+      const attrs = [
+        `from="${shortcode.from}"`,
+        `to="${shortcode.to}"`,
+        `width="${shortcode.width}"`,
+        `height="${shortcode.height}"`,
+        `title="${shortcode.title}"`,
+      ];
+      if (shortcode.aggKey) attrs.push(`aggKey="${shortcode.aggKey}"`);
+      if (shortcode.jobsKey) attrs.push(`jobsKey="${shortcode.jobsKey}"`);
+      return `{{< chart_itmarket_all ${attrs.join(' ')} >}}`;
     }
     case 'itmarket_table': {
       if (shortcode.mode === 'single') {
@@ -112,10 +187,70 @@ const formatShortcode = (shortcode: Shortcode): string => {
 const latestAggregate = monthlyDataset.it_aggregate.at(0);
 const latestJobs = monthlyDataset.it_jobs.at(0);
 
+const serializeMonthlyEntry = (entry: MonthlyEntry) => {
+  const lines: string[] = [];
+  const push = (text: string) => lines.push(text);
+
+  push('[[it_aggregate]]');
+  push(`month = "${entry.month}"`);
+  push(`label = "${entry.label}"`);
+  push(`unemployed = ${entry.itAggregate.unemployed ?? 0}`);
+  push(`seeking = ${entry.itAggregate.seeking ?? 0}`);
+  push('');
+
+  push('[[it_jobs]]');
+  push(`month = "${entry.month}"`);
+  push(`label = "${entry.label}"`);
+  push(`it_jobs = ${entry.itJobs.it_jobs ?? 0}`);
+  push('');
+
+  push('[[germany]]');
+  push(`month = "${entry.month}"`);
+  push(`label = "${entry.month.split('-')[1]}/${entry.month.slice(2, 4)}"`);
+  push(`unemployed = ${entry.germany.unemployed ?? 0}`);
+  push(`seeking = ${entry.germany.seeking ?? 0}`);
+  push(`jobs = ${entry.germany.jobs ?? 0}`);
+  push('');
+
+  push('[[infra_aggregate]]');
+  push(`month = "${entry.month}"`);
+  push(`label = "${entry.label}"`);
+  push(`unemployed = ${entry.infraAggregate.unemployed ?? 0}`);
+  push(`seeking = ${entry.infraAggregate.seeking ?? 0}`);
+  push('');
+
+  push('[[infra_jobs]]');
+  push(`month = "${entry.month}"`);
+  push(`label = "${entry.label}"`);
+  push(`it_jobs = ${entry.infraJobs.it_jobs ?? 0}`);
+  push('');
+
+  push('[[software_aggregate]]');
+  push(`month = "${entry.month}"`);
+  push(`label = "${entry.label}"`);
+  push(`unemployed = ${entry.softwareAggregate.unemployed ?? 0}`);
+  push(`seeking = ${entry.softwareAggregate.seeking ?? 0}`);
+  push('');
+
+  push('[[software_jobs]]');
+  push(`month = "${entry.month}"`);
+  push(`label = "${entry.label}"`);
+  push(`it_jobs = ${entry.softwareJobs.it_jobs ?? 0}`);
+
+  return lines.join('\n');
+};
+
 function App() {
-  const [frontmatter, setFrontmatter] = useState<Frontmatter>(loadFrontmatterFromStorage);
+  const [frontmatter, setFrontmatter] = useState<Frontmatter>(defaultFrontmatter);
   const [shortcodes, setShortcodes] = useState<Shortcode[]>(loadShortcodesFromStorage);
-  const [body, setBody] = useState<string>(loadBodyFromStorage);
+  const [body, setBody] = useState<string>(defaultBody);
+  const [monthlyEntry, setMonthlyEntry] = useState<MonthlyEntry>(monthlyDefaultsPreset);
+
+  useEffect(() => {
+    setFrontmatter(loadFrontmatterFromStorage());
+    setBody(loadBodyFromStorage());
+    setMonthlyEntry(loadMonthlyEntryFromStorage());
+  }, []);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -132,6 +267,11 @@ function App() {
     window.localStorage.setItem(BODY_STORAGE_KEY, body);
   }, [body]);
 
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    window.localStorage.setItem(MONTHLY_ENTRY_STORAGE_KEY, JSON.stringify(monthlyEntry));
+  }, [monthlyEntry]);
+
   const frontmatterValidation = useMemo(
     () => frontmatterSchema.safeParse(frontmatter),
     [frontmatter],
@@ -143,10 +283,13 @@ function App() {
   }, [frontmatterValidation]);
 
   const shortcodesValidation = shortcodes.map((entry) => shortcodeSchema.safeParse(entry));
-  const canExport = frontmatterValidation.success && shortcodesValidation.every((res) => res.success);
-
+  const hasValidShortcodes = shortcodesValidation.every((entry) => entry.success);
   const serializedFrontmatter = useMemo(() => serializeFrontmatter(frontmatter), [frontmatter]);
-  const markdownPreview = useMemo(() => `${serializedFrontmatter}\n\n${body}`.trim(), [serializedFrontmatter, body]);
+  const markdownPreview = useMemo(
+    () => `${serializedFrontmatter}\n\n${body}`.trim(),
+    [serializedFrontmatter, body],
+  );
+  const canExport = frontmatterValidation.success && hasValidShortcodes;
 
   const handleFrontmatterChange =
     (field: keyof Frontmatter) => (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -222,46 +365,167 @@ function App() {
       await navigator.clipboard.writeText(markdownPreview);
       alert('Markdown kopiert.');
     } catch (error) {
-      console.error('Copy failed', error);
+      console.error('Kopieren fehlgeschlagen', error);
       alert('Konnte nicht kopieren. Bitte manuell kopieren.');
     }
   };
 
+  const handleMonthlyField =
+    <K extends keyof MonthlyEntry>(field: K) =>
+    (event: ChangeEvent<HTMLInputElement>) => {
+      const value = event.target.value;
+      setMonthlyEntry((prev) => ({
+        ...prev,
+        [field]: value,
+      }));
+    };
+
+  const handleMonthlyNumbers =
+    (
+      bucket:
+        | 'itAggregate'
+        | 'itJobs'
+        | 'germany'
+        | 'infraAggregate'
+        | 'infraJobs'
+        | 'softwareAggregate'
+        | 'softwareJobs',
+      key: keyof MonthlyCategoryNumbers,
+    ) =>
+    (event: ChangeEvent<HTMLInputElement>) => {
+      const numeric = Number(event.target.value || 0);
+      setMonthlyEntry((prev) => ({
+        ...prev,
+        [bucket]: {
+          ...prev[bucket],
+          [key]: numeric,
+        },
+      }));
+    };
+
+  const monthlySnippet = useMemo(
+    () => serializeMonthlyEntry(monthlyEntry),
+    [monthlyEntry],
+  );
+
+  const FieldBadge = ({ isDefault }: { isDefault: boolean }) => (
+    <span className={`text-xs font-semibold ${isDefault ? 'text-muted-foreground' : 'text-emerald-600'}`}>
+      {isDefault ? 'Standard' : 'Neu'}
+    </span>
+  );
+
+  const renderLabel = (text: string, isDefault: boolean) => (
+    <div className="flex items-center justify-between">
+      <span className="text-sm font-medium">{text}</span>
+      <FieldBadge isDefault={isDefault} />
+    </div>
+  );
+
+  const isFrontmatterFieldDefault = (field: keyof Frontmatter) => {
+    const initial = defaultFrontmatter[field];
+    const current = frontmatter[field];
+    if (Array.isArray(initial) && Array.isArray(current)) {
+      return JSON.stringify(initial) === JSON.stringify(current);
+    }
+    if (typeof initial === 'object' && initial !== null) {
+      return JSON.stringify(initial) === JSON.stringify(current);
+    }
+    return initial === current;
+  };
+
+  const isFrontmatterOverallDefault = useMemo(
+    () => JSON.stringify(frontmatter) === JSON.stringify(defaultFrontmatter),
+    [frontmatter],
+  );
+  const isBodyDefault = useMemo(
+    () => body.trim() === defaultBody.trim(),
+    [body],
+  );
+  const areShortcodesDefault = useMemo(
+    () => shortcodes.length === 0,
+    [shortcodes],
+  );
+  const areMonthlyDefault = useMemo(
+    () => JSON.stringify(monthlyEntry) === JSON.stringify(monthlyDefaultsPreset),
+    [monthlyEntry],
+  );
+
+  const isMonthlyTextDefault = (field: 'month' | 'label') =>
+    monthlyEntry[field] === monthlyDefaultsPreset[field];
+
+  const isMonthlyNumberDefault = (
+    bucket:
+      | 'itAggregate'
+      | 'itJobs'
+      | 'germany'
+      | 'infraAggregate'
+      | 'infraJobs'
+      | 'softwareAggregate'
+      | 'softwareJobs',
+    key: keyof MonthlyCategoryNumbers | 'it_jobs',
+  ) => {
+    const baseBucket = monthlyDefaultsPreset[bucket] as MonthlyCategoryNumbers & { it_jobs?: number };
+    const currentBucket = monthlyEntry[bucket] as MonthlyCategoryNumbers & { it_jobs?: number };
+    return (currentBucket[key] ?? null) === (baseBucket[key] ?? null);
+  };
+
   return (
     <main className="mx-auto max-w-6xl space-y-10 px-4 py-10">
-      <header className="space-y-2">
-        <p className="text-sm uppercase tracking-wider text-muted-foreground">Sprint 01</p>
-        <h1 className="text-3xl font-semibold text-foreground">Blogposter – Formulareingabe</h1>
-        <p className="text-base text-muted-foreground">
-          Metadaten, Body-Text, FAQ und Shortcodes auf einen Blick. Alles wird direkt validiert und im Browser gespeichert.
-        </p>
+      <header className="space-y-4">
+        <div>
+          <p className="text-sm uppercase tracking-wider text-muted-foreground">Sprint 01</p>
+          <h1 className="text-3xl font-semibold text-foreground">Blogposter – Formulareingabe</h1>
+          <p className="text-base text-muted-foreground">
+            Metadaten, Body-Text, FAQ und Shortcodes auf einen Blick. Alles wird geprüft und lokal gespeichert.
+          </p>
+        </div>
+        <ul className="flex flex-wrap gap-6 text-sm">
+          <li className={isFrontmatterOverallDefault ? 'text-muted-foreground' : 'text-emerald-700'}>
+            {isFrontmatterOverallDefault ? '⚠️ Metadaten noch Beispiel' : '✅ Metadaten angepasst'}
+          </li>
+          <li className={isBodyDefault ? 'text-muted-foreground' : 'text-emerald-700'}>
+            {isBodyDefault ? '⚠️ Body noch Beispiel' : '✅ Body angepasst'}
+          </li>
+          <li className={areShortcodesDefault ? 'text-muted-foreground' : 'text-emerald-700'}>
+            {areShortcodesDefault ? '⚠️ Shortcodes noch Beispiel' : '✅ Shortcodes angepasst'}
+          </li>
+          <li className={areMonthlyDefault ? 'text-muted-foreground' : 'text-emerald-700'}>
+            {areMonthlyDefault ? '⚠️ Monatsdaten noch Beispiel' : '✅ Monatsdaten angepasst'}
+          </li>
+        </ul>
       </header>
 
       <section className="rounded-lg border border-border bg-card p-6 shadow-sm">
-        <h2 className="text-xl font-semibold">Metadaten</h2>
+        <div className="flex items-center justify-between gap-4">
+          <h2 className="text-xl font-semibold">Metadaten</h2>
+          <FieldBadge isDefault={isFrontmatterOverallDefault} />
+        </div>
         <div className="mt-4 grid gap-4 md:grid-cols-2">
           <div className="flex flex-col gap-1">
-            <label className="text-sm font-medium">Titel</label>
+            {renderLabel('Titel', isFrontmatterFieldDefault('title'))}
             <input
               className="rounded-md border border-input bg-background px-3 py-2 text-sm"
               value={frontmatter.title}
               onChange={handleFrontmatterChange('title')}
+              placeholder="IT-Arbeitsmarkt November 2025"
             />
             {frontmatterFieldErrors.title && <p className="text-sm text-destructive">{frontmatterFieldErrors.title[0]}</p>}
           </div>
           <div className="flex flex-col gap-1">
-            <label className="text-sm font-medium">Slug</label>
+            {renderLabel('Slug', isFrontmatterFieldDefault('slug'))}
             <input
               className="rounded-md border border-input bg-background px-3 py-2 text-sm"
               value={frontmatter.slug}
               onChange={handleFrontmatterChange('slug')}
+              placeholder="/it-arbeitsmarkt-november-2025"
             />
             {frontmatterFieldErrors.slug && <p className="text-sm text-destructive">{frontmatterFieldErrors.slug[0]}</p>}
           </div>
         </div>
+
         <div className="mt-4 grid gap-4">
           <div className="flex flex-col gap-1">
-            <label className="text-sm font-medium">Beschreibung</label>
+            {renderLabel('Beschreibung', isFrontmatterFieldDefault('description'))}
             <textarea
               className="min-h-[80px] rounded-md border border-input bg-background px-3 py-2 text-sm"
               value={frontmatter.description}
@@ -270,7 +534,7 @@ function App() {
             {frontmatterFieldErrors.description && <p className="text-sm text-destructive">{frontmatterFieldErrors.description[0]}</p>}
           </div>
           <div className="flex flex-col gap-1">
-            <label className="text-sm font-medium">Summary</label>
+            {renderLabel('Summary', isFrontmatterFieldDefault('summary'))}
             <textarea
               className="min-h-[80px] rounded-md border border-input bg-background px-3 py-2 text-sm"
               value={frontmatter.summary}
@@ -279,9 +543,10 @@ function App() {
             {frontmatterFieldErrors.summary && <p className="text-sm text-destructive">{frontmatterFieldErrors.summary[0]}</p>}
           </div>
         </div>
+
         <div className="mt-4 grid gap-4 md:grid-cols-2">
           <div className="flex flex-col gap-1">
-            <label className="text-sm font-medium">Datum (ISO)</label>
+            {renderLabel('Datum (ISO)', isFrontmatterFieldDefault('date'))}
             <input
               className="rounded-md border border-input bg-background px-3 py-2 text-sm"
               value={frontmatter.date}
@@ -291,7 +556,7 @@ function App() {
             {frontmatterFieldErrors.date && <p className="text-sm text-destructive">{frontmatterFieldErrors.date[0]}</p>}
           </div>
           <div className="flex flex-col gap-1">
-            <label className="text-sm font-medium">Autor</label>
+            {renderLabel('Autor', isFrontmatterFieldDefault('author'))}
             <input
               className="rounded-md border border-input bg-background px-3 py-2 text-sm"
               value={frontmatter.author}
@@ -300,18 +565,20 @@ function App() {
             {frontmatterFieldErrors.author && <p className="text-sm text-destructive">{frontmatterFieldErrors.author[0]}</p>}
           </div>
         </div>
+
         <div className="mt-4 grid gap-4 md:grid-cols-2">
           <div className="flex flex-col gap-1">
-            <label className="text-sm font-medium">Bildpfad</label>
+            {renderLabel('Bildpfad', isFrontmatterFieldDefault('image'))}
             <input
               className="rounded-md border border-input bg-background px-3 py-2 text-sm"
               value={frontmatter.image}
               onChange={handleFrontmatterChange('image')}
+              placeholder="/Bilder/..."
             />
             {frontmatterFieldErrors.image && <p className="text-sm text-destructive">{frontmatterFieldErrors.image[0]}</p>}
           </div>
           <div className="flex flex-col gap-1">
-            <label className="text-sm font-medium">Bild Alt-Text</label>
+            {renderLabel('Bild Alt-Text', isFrontmatterFieldDefault('imageAlt'))}
             <input
               className="rounded-md border border-input bg-background px-3 py-2 text-sm"
               value={frontmatter.imageAlt}
@@ -320,21 +587,34 @@ function App() {
             {frontmatterFieldErrors.imageAlt && <p className="text-sm text-destructive">{frontmatterFieldErrors.imageAlt[0]}</p>}
           </div>
         </div>
+
         <div className="mt-4 grid gap-4 md:grid-cols-2">
-          <label className="flex items-center gap-2 text-sm font-medium">
-            <input type="checkbox" className="rounded border border-input" checked={frontmatter.draft} onChange={handleFrontmatterChange('draft')} />
-            Draft aktivieren
-          </label>
           <div className="flex flex-col gap-1">
-            <label className="text-sm font-medium">jobSnippedTag</label>
-            <input className="rounded-md border border-input bg-background px-3 py-2 text-sm" value={frontmatter.jobSnippedTag} onChange={handleFrontmatterChange('jobSnippedTag')} />
+            {renderLabel('Draft aktivieren', isFrontmatterFieldDefault('draft'))}
+            <label className="flex items-center gap-2 text-sm">
+              <input type="checkbox" className="rounded border border-input" checked={frontmatter.draft} onChange={handleFrontmatterChange('draft')} />
+              <span>Aktiv</span>
+            </label>
+          </div>
+          <div className="flex flex-col gap-1">
+            {renderLabel('jobSnippedTag', isFrontmatterFieldDefault('jobSnippedTag'))}
+            <input
+              className="rounded-md border border-input bg-background px-3 py-2 text-sm"
+              value={frontmatter.jobSnippedTag}
+              onChange={handleFrontmatterChange('jobSnippedTag')}
+            />
             {frontmatterFieldErrors.jobSnippedTag && <p className="text-sm text-destructive">{frontmatterFieldErrors.jobSnippedTag[0]}</p>}
           </div>
         </div>
+
         <div className="mt-4 grid gap-4 md:grid-cols-2">
           <div className="flex flex-col gap-1">
-            <label className="text-sm font-medium">Lesedauer</label>
-            <input className="rounded-md border border-input bg-background px-3 py-2 text-sm" value={frontmatter.lesedauer} onChange={handleFrontmatterChange('lesedauer')} />
+            {renderLabel('Lesedauer', isFrontmatterFieldDefault('lesedauer'))}
+            <input
+              className="rounded-md border border-input bg-background px-3 py-2 text-sm"
+              value={frontmatter.lesedauer}
+              onChange={handleFrontmatterChange('lesedauer')}
+            />
             {frontmatterFieldErrors.lesedauer && <p className="text-sm text-destructive">{frontmatterFieldErrors.lesedauer[0]}</p>}
           </div>
           <div className="flex flex-col gap-1">
@@ -342,12 +622,14 @@ function App() {
             <input className="rounded-md border border-dashed bg-muted px-3 py-2 text-sm" value={`${sanitizeFileName(frontmatter.slug)}.md`} disabled />
           </div>
         </div>
+
         <div className="mt-6 grid gap-4 md:grid-cols-2">
           {(['categories', 'tags', 'zielgruppe', 'Keywords'] as const).map((field) => (
             <div key={field} className="flex flex-col gap-1">
-              <label className="text-sm font-medium">
-                {field === 'Keywords' ? 'Keywords' : field.charAt(0).toUpperCase() + field.slice(1)} (kommagetrennt)
-              </label>
+              {renderLabel(
+                `${field === 'Keywords' ? 'Keywords' : field.charAt(0).toUpperCase() + field.slice(1)} (kommagetrennt)`,
+                isFrontmatterFieldDefault(field),
+              )}
               <input
                 className="rounded-md border border-input bg-background px-3 py-2 text-sm"
                 value={listToInput(frontmatter[field])}
@@ -363,9 +645,9 @@ function App() {
         <div className="flex items-center justify-between">
           <div>
             <h2 className="text-xl font-semibold">Body (Markdown inkl. Shortcodes)</h2>
-            <p className="text-sm text-muted-foreground">Hier den eigentlichen Artikel schreiben. Shortcodes lassen sich unten kopieren.</p>
+            <p className="text-sm text-muted-foreground">Hier entsteht der Artikeltext. Shortcodes lassen sich unten per Klick einfügen.</p>
           </div>
-          <span className="text-sm text-muted-foreground">{body.length} Zeichen</span>
+          <FieldBadge isDefault={isBodyDefault} />
         </div>
         <textarea
           className="mt-4 min-h-[280px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
@@ -420,8 +702,9 @@ function App() {
         <div className="flex items-center justify-between">
           <div>
             <h2 className="text-xl font-semibold">Shortcodes</h2>
-            <p className="text-sm text-muted-foreground">Space, Chart und Tabellen konfigurieren – dann in den Body einfügen.</p>
+            <p className="text-sm text-muted-foreground">Space, Charts und Tabellen konfigurieren – per Klick in den Body übernehmen.</p>
           </div>
+          <FieldBadge isDefault={areShortcodesDefault} />
           <div className="flex flex-wrap gap-2">
             <button className="rounded-md border border-input px-3 py-2 text-sm" type="button" onClick={() => addShortcode('space')}>
               Space
@@ -650,36 +933,164 @@ function App() {
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
             <h2 className="text-xl font-semibold">Preview & Export</h2>
-            <p className="text-sm text-muted-foreground">
-              Frontmatter + Body als Markdown. Zuerst prüfen, dann kopieren oder herunterladen.
-            </p>
+            <p className="text-sm text-muted-foreground">Frontmatter + Body prüfen, dann kopieren oder herunterladen.</p>
           </div>
           <div className="flex gap-2">
-            <button
-              className="rounded-md border border-input px-3 py-2 text-sm"
-              type="button"
-              onClick={handleCopy}
-              disabled={!canExport}
-            >
+            <button className="rounded-md border border-input px-3 py-2 text-sm" type="button" onClick={handleCopy} disabled={!canExport}>
               Kopieren
             </button>
-            <button
-              className="rounded-md bg-primary px-3 py-2 text-sm text-primary-foreground disabled:opacity-50"
-              type="button"
-              onClick={handleDownload}
-              disabled={!canExport}
-            >
+            <button className="rounded-md bg-primary px-3 py-2 text-sm text-primary-foreground disabled:opacity-50" type="button" onClick={handleDownload} disabled={!canExport}>
               Download (.md)
             </button>
           </div>
         </div>
         {!canExport && (
-          <p className="mt-2 text-sm text-destructive">
-            Export erst möglich, wenn Metadaten + Shortcodes gültig sind.
-          </p>
+          <p className="mt-2 text-sm text-destructive">Export erst möglich, wenn Metadaten + Shortcodes gültig sind.</p>
         )}
         <pre className="mt-4 max-h-[420px] overflow-auto rounded-md border border-border bg-background p-4 text-sm">
           {markdownPreview || 'Noch kein Inhalt.'}
+        </pre>
+      </section>
+
+      <section className="rounded-lg border border-border bg-card p-6 shadow-sm">
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <h2 className="text-xl font-semibold">Monatsdaten (TOML)</h2>
+            <p className="text-sm text-muted-foreground">
+              Monat eintragen, Zahlen ergänzen, dann in monatly.toml übernehmen.
+            </p>
+          </div>
+          <FieldBadge isDefault={areMonthlyDefault} />
+          <div className="flex gap-2">
+            <button
+              className="rounded-md border border-input px-3 py-2 text-sm"
+              type="button"
+              onClick={() => navigator.clipboard.writeText(monthlySnippet)}
+            >
+              TOML kopieren
+            </button>
+          </div>
+        </div>
+        <div className="mt-4 grid gap-4 md:grid-cols-2">
+          <div className="flex flex-col gap-1">
+            {renderLabel('Monat (YYYY-MM)', isMonthlyTextDefault('month'))}
+            <input
+              className="rounded-md border border-input bg-background px-3 py-2 text-sm"
+              value={monthlyEntry.month}
+              onChange={handleMonthlyField('month')}
+            />
+          </div>
+          <div className="flex flex-col gap-1">
+            {renderLabel('Label (z. B. Dezember 2025)', isMonthlyTextDefault('label'))}
+            <input
+              className="rounded-md border border-input bg-background px-3 py-2 text-sm"
+              value={monthlyEntry.label}
+              onChange={handleMonthlyField('label')}
+            />
+          </div>
+        </div>
+        <div className="mt-6 grid gap-4 md:grid-cols-2">
+          <div className="rounded-md border border-dashed border-border p-4">
+            <h3 className="text-sm font-semibold">IT Aggregate</h3>
+            <div className="mt-2 grid gap-2">
+              {renderLabel('Arbeitslos', isMonthlyNumberDefault('itAggregate', 'unemployed'))}
+              <input
+                type="number"
+                className="rounded-md border border-input bg-background px-3 py-2 text-sm"
+                value={monthlyEntry.itAggregate.unemployed ?? ''}
+                onChange={handleMonthlyNumbers('itAggregate', 'unemployed')}
+              />
+              {renderLabel('Suchend', isMonthlyNumberDefault('itAggregate', 'seeking'))}
+              <input
+                type="number"
+                className="rounded-md border border-input bg-background px-3 py-2 text-sm"
+                value={monthlyEntry.itAggregate.seeking ?? ''}
+                onChange={handleMonthlyNumbers('itAggregate', 'seeking')}
+              />
+            </div>
+          </div>
+          <div className="rounded-md border border-dashed border-border p-4">
+            <h3 className="text-sm font-semibold">IT Jobs (gesamt)</h3>
+            {renderLabel('Neue IT Jobs', isMonthlyNumberDefault('itJobs', 'it_jobs'))}
+            <input
+              type="number"
+              className="rounded-md border border-input bg-background px-3 py-2 text-sm"
+              value={monthlyEntry.itJobs.it_jobs ?? ''}
+              onChange={handleMonthlyNumbers('itJobs', 'it_jobs')}
+            />
+          </div>
+          <div className="rounded-md border border-dashed border-border p-4">
+            <h3 className="text-sm font-semibold">Deutschland gesamt</h3>
+            {(['unemployed', 'seeking', 'jobs'] as const).map((field) => (
+              <div key={field} className="mt-2">
+                {renderLabel(
+                  field === 'unemployed'
+                    ? 'Arbeitslose'
+                    : field === 'seeking'
+                    ? 'Suchend'
+                    : 'Jobs',
+                  isMonthlyNumberDefault('germany', field),
+                )}
+                <input
+                  type="number"
+                  className="rounded-md border border-input bg-background px-3 py-2 text-sm"
+                  value={monthlyEntry.germany[field] ?? ''}
+                  onChange={handleMonthlyNumbers('germany', field)}
+                />
+              </div>
+            ))}
+          </div>
+          <div className="rounded-md border border-dashed border-border p-4">
+            <h3 className="text-sm font-semibold">IT Infrastruktur</h3>
+            {renderLabel('Arbeitslos', isMonthlyNumberDefault('infraAggregate', 'unemployed'))}
+            <input
+              type="number"
+              className="rounded-md border border-input bg-background px-3 py-2 text-sm"
+              value={monthlyEntry.infraAggregate.unemployed ?? ''}
+              onChange={handleMonthlyNumbers('infraAggregate', 'unemployed')}
+            />
+            {renderLabel('Suchend', isMonthlyNumberDefault('infraAggregate', 'seeking'))}
+            <input
+              type="number"
+              className="rounded-md border border-input bg-background px-3 py-2 text-sm"
+              value={monthlyEntry.infraAggregate.seeking ?? ''}
+              onChange={handleMonthlyNumbers('infraAggregate', 'seeking')}
+            />
+            {renderLabel('Neue Jobs', isMonthlyNumberDefault('infraJobs', 'it_jobs'))}
+            <input
+              type="number"
+              className="rounded-md border border-input bg-background px-3 py-2 text-sm"
+              value={monthlyEntry.infraJobs.it_jobs ?? ''}
+              onChange={handleMonthlyNumbers('infraJobs', 'it_jobs')}
+            />
+          </div>
+          <div className="rounded-md border border-dashed border-border p-4">
+            <h3 className="text-sm font-semibold">Softwareentwicklung</h3>
+            {renderLabel('Arbeitslos', isMonthlyNumberDefault('softwareAggregate', 'unemployed'))}
+            <input
+              type="number"
+              className="rounded-md border border-input bg-background px-3 py-2 text-sm"
+              value={monthlyEntry.softwareAggregate.unemployed ?? ''}
+              onChange={handleMonthlyNumbers('softwareAggregate', 'unemployed')}
+            />
+            {renderLabel('Suchend', isMonthlyNumberDefault('softwareAggregate', 'seeking'))}
+            <input
+              type="number"
+              className="rounded-md border border-input bg-background px-3 py-2 text-sm"
+              value={monthlyEntry.softwareAggregate.seeking ?? ''}
+              onChange={handleMonthlyNumbers('softwareAggregate', 'seeking')}
+            />
+            {renderLabel('Neue Jobs', isMonthlyNumberDefault('softwareJobs', 'it_jobs'))}
+            <input
+              type="number"
+              className="rounded-md border border-input bg-background px-3 py-2 text-sm"
+              value={monthlyEntry.softwareJobs.it_jobs ?? ''}
+              onChange={handleMonthlyNumbers('softwareJobs', 'it_jobs')}
+            />
+          </div>
+        </div>
+        <pre className="mt-4 max-h-[320px] overflow-auto rounded-md border border-border bg-background p-4 text-sm">
+          {monthlySnippet}
         </pre>
       </section>
     </main>

@@ -1,4 +1,4 @@
-import { parse as parseToml, stringify } from 'toml';
+import { parse as parseToml, stringify } from '@iarna/toml';
 import { monthlyDatasetSchema } from '../schemas/monthly';
 import type { MonthlyDataset } from '../schemas/monthly';
 
