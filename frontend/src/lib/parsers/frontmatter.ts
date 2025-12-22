@@ -1,4 +1,4 @@
-import { parse as parseToml, stringify } from 'toml';
+import { parse as parseToml, stringify } from '@iarna/toml';
 import { frontmatterSchema } from '../schemas/frontmatter';
 import type { Frontmatter } from '../schemas/frontmatter';
 
