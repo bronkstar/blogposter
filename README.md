@@ -40,6 +40,19 @@
    ```bash
    npm --prefix frontend run build
    ```
+4. **Unit-Tests (Vitest) ausführen**
+   ```bash
+   npm --prefix frontend run test
+   ```
+5. **Unit-Tests live beobachten**
+   ```bash
+   npm --prefix frontend run test:watch
+   ```
+6. **End-to-End-Test (Playwright)**
+   ```bash
+   npm --prefix frontend run test:e2e
+   ```
+   _Nur beim ersten Mal_: `npx --prefix frontend playwright install` (lädt den Browser für Playwright).
 
 > Tipp: Die Befehle werden aktuell nur im Ordner `frontend` benötigt. Ein Backend gibt es noch nicht.
 
@@ -60,11 +73,19 @@ Blogposter ist eine kleine Web-App, mit der strukturierte IT-Arbeitsmarktbericht
 3. **Phasenplan** → Jede Phase endet mit einem eigenen Commit + Statusnotiz im Konzept.
 4. **Nach jedem Arbeitsschritt** → kurz prüfen, ob ein eigener Commit nötig ist (lieber viele kleine Schritte).
 
-## Status Phase 1 (heute)
+## Status Sprint 01 (Stand heute)
 
-- ✅ Vite/React/TS + Tailwind + shadcn eingerichtet.
-- ✅ Dev-Server und `npm run build` laufen.
-- ⏳ Formular, Parser, Export, Tests folgen in Phase 2+.
+- ✅ Phase 1: Setup (Vite/React/Tailwind/shadcn) + Build.
+- ✅ Phase 2: Schema & Parser (Frontmatter und monthly.toml).
+- ✅ Phase 3: Form-UX (Metadaten, FAQ, Shortcodes, Local Storage).
+- ✅ Phase 4: Preview & Export inkl. Monatsdaten-Formular und Standard/Neu-Indikatoren.
+- 🔄 Phase 5: Tests & Docs (Vitest + Playwright + README-Update).
+
+## Tests & Qualitätssicherung
+
+- **Unit-Tests (Vitest)** decken Parser & Serializer ab (`frontmatter` und `monthly`), sodass Export/Import nicht unbemerkt kaputtgeht. Kommando: `npm --prefix frontend run test`.
+- **Playwright-Smoke-Test** startet den Dev-Server automatisch, öffnet die App und kontrolliert, ob Standarddaten + UI sichtbar sind. Kommando: `npm --prefix frontend run test:e2e` (vorher einmal `npx --prefix frontend playwright install` ausführen).
+- **Empfehlung vor jedem Commit**: `npm --prefix frontend run test && npm --prefix frontend run build`. Im CI können dieselben Befehle genutzt werden.
 
 ## Häufige Fragen (Stand jetzt)
 
@@ -74,6 +95,5 @@ Blogposter ist eine kleine Web-App, mit der strukturierte IT-Arbeitsmarktbericht
 
 ## Nächste Schritte
 
-1. Phase 2 (Schema & Parser) nach Konzept starten.
-2. Form-UX aufbauen (Phase 3).
-3. Export & Tests ergänzen.
+1. Phase 5 abschließen (Tests + Dokumentation finalisieren).
+2. Phase 6 (falls geplant) definieren – z. B. Deployment/Hosting oder Erweiterungen für monthly.toml.

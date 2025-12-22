@@ -6,9 +6,10 @@ export const FRONTMATTER_DELIMITER = '+++';
 
 export function parseFrontmatterBlock(block: string): Frontmatter {
   const trimmed = block.trim();
+  const escapedDelimiter = FRONTMATTER_DELIMITER.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   const withoutDelimiters = trimmed
-    .replace(new RegExp(`^${FRONTMATTER_DELIMITER}`), '')
-    .replace(new RegExp(`${FRONTMATTER_DELIMITER}$`), '')
+    .replace(new RegExp(`^${escapedDelimiter}`), '')
+    .replace(new RegExp(`${escapedDelimiter}$`), '')
     .trim();
   const parsed = parseToml(withoutDelimiters);
   return frontmatterSchema.parse(parsed);

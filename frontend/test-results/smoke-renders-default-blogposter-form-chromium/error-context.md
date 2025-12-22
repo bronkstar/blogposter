@@ -1,0 +1,270 @@
+# Page snapshot
+
+```yaml
+- main [ref=e3]:
+  - generic [ref=e4]:
+    - generic [ref=e5]:
+      - paragraph [ref=e6]: Sprint 01
+      - heading "Blogposter – Formulareingabe" [level=1] [ref=e7]
+      - paragraph [ref=e8]: Metadaten, Body-Text, FAQ und Shortcodes auf einen Blick. Alles wird geprüft und lokal gespeichert.
+    - list [ref=e9]:
+      - listitem [ref=e10]: ⚠️ Metadaten noch Beispiel
+      - listitem [ref=e11]: ⚠️ Body noch Beispiel
+      - listitem [ref=e12]: ⚠️ Shortcodes noch Beispiel
+      - listitem [ref=e13]: ⚠️ Monatsdaten noch Beispiel
+  - generic [ref=e14]:
+    - generic [ref=e15]:
+      - heading "Metadaten" [level=2] [ref=e16]
+      - generic [ref=e17]: Standard
+    - generic [ref=e18]:
+      - generic [ref=e19]:
+        - generic [ref=e20]:
+          - generic [ref=e21]: Titel
+          - generic [ref=e22]: Standard
+        - textbox "IT-Arbeitsmarkt November 2025" [ref=e23]: IT-Arbeitsmarkt November 2025 - Wo bleibt der Herbst der Reformen?
+      - generic [ref=e24]:
+        - generic [ref=e25]:
+          - generic [ref=e26]: Slug
+          - generic [ref=e27]: Standard
+        - textbox "/it-arbeitsmarkt-november-2025" [ref=e28]
+    - generic [ref=e29]:
+      - generic [ref=e30]:
+        - generic [ref=e31]:
+          - generic [ref=e32]: Beschreibung
+          - generic [ref=e33]: Standard
+        - textbox [ref=e34]: "November 2025: 146.325 IT-Fachkräfte arbeitslos/arbeitssuchend, nur 11.668 neue IT-Jobs. Trend zeigt weiter nach unten"
+      - generic [ref=e35]:
+        - generic [ref=e36]:
+          - generic [ref=e37]: Summary
+          - generic [ref=e38]: Standard
+        - textbox [ref=e39]: "November 2025: 146.325 IT-Fachkräfte arbeitslos/arbeitssuchend. Nur 11.668 neue IT-Jobs – dritter Monat unter 12k, -19,3 % im Jahresvergleich. IT-Infrastruktur: Arbeitslosigkeit steigt weiter, Jobangebot sinkt erneut. Softwareentwicklung: Positive Ausnahme – arbeitslose Devs weiterhin rückläufig (seit August). Gesamtbild: keine Trendwende, Reformen bleiben aus – Unsicherheit bremst die Nachfrage."
+    - generic [ref=e40]:
+      - generic [ref=e41]:
+        - generic [ref=e42]:
+          - generic [ref=e43]: Datum (ISO)
+          - generic [ref=e44]: Standard
+        - textbox "2025-12-02T09:00:00+02:00" [ref=e45]
+      - generic [ref=e46]:
+        - generic [ref=e47]:
+          - generic [ref=e48]: Autor
+          - generic [ref=e49]: Standard
+        - textbox [ref=e50]: Björn-Richter
+    - generic [ref=e51]:
+      - generic [ref=e52]:
+        - generic [ref=e53]:
+          - generic [ref=e54]: Bildpfad
+          - generic [ref=e55]: Standard
+        - textbox "/Bilder/..." [ref=e56]: /Bilder/Startseite/Blog/it-arbeitsmarkt-thumbnail-november-2025.webp
+      - generic [ref=e57]:
+        - generic [ref=e58]:
+          - generic [ref=e59]: Bild Alt-Text
+          - generic [ref=e60]: Standard
+        - textbox [ref=e61]: Schriftzug IT Arbeitsmarkt November 2025. Firma Die Tech Recruiter GmbH
+    - generic [ref=e62]:
+      - generic [ref=e63]:
+        - generic [ref=e64]:
+          - generic [ref=e65]: Draft aktivieren
+          - generic [ref=e66]: Standard
+        - generic [ref=e67]:
+          - checkbox "Aktiv" [ref=e68]
+          - generic [ref=e69]: Aktiv
+      - generic [ref=e70]:
+        - generic [ref=e71]:
+          - generic [ref=e72]: jobSnippedTag
+          - generic [ref=e73]: Standard
+        - textbox [ref=e74]: management
+    - generic [ref=e75]:
+      - generic [ref=e76]:
+        - generic [ref=e77]:
+          - generic [ref=e78]: Lesedauer
+          - generic [ref=e79]: Standard
+        - textbox [ref=e80]: 5 Minuten
+      - generic [ref=e81]:
+        - generic [ref=e82]: Dateiname (aus Slug)
+        - textbox [disabled] [ref=e83]: it-arbeitsmarkt-november-2025.md
+    - generic [ref=e84]:
+      - generic [ref=e85]:
+        - generic [ref=e86]:
+          - generic [ref=e87]: Categories (kommagetrennt)
+          - generic [ref=e88]: Standard
+        - textbox [ref=e89]: Reports
+      - generic [ref=e90]:
+        - generic [ref=e91]:
+          - generic [ref=e92]: Tags (kommagetrennt)
+          - generic [ref=e93]: Standard
+        - textbox [ref=e94]: IT Arbeitsmarkt, Q4/2025, November 2025
+      - generic [ref=e95]:
+        - generic [ref=e96]:
+          - generic [ref=e97]: Zielgruppe (kommagetrennt)
+          - generic [ref=e98]: Standard
+        - textbox [ref=e99]: Für Arbeitgeber, IT-Talente
+      - generic [ref=e100]:
+        - generic [ref=e101]:
+          - generic [ref=e102]: Keywords (kommagetrennt)
+          - generic [ref=e103]: Standard
+        - textbox [ref=e104]: IT-Arbeitsmarkt 2025, IT-Arbeitsmarkt November 2025, IT Jobmarkt Deutschland, IT-Fachkräfte Deutschland, IT-Jobs Rückgang, Tech-Layoffs 2025, Arbeitsmarktbericht IT, Softwareentwickler Arbeitslosigkeit, IT-Infrastruktur Jobs, Agentur für Arbeit IT, IT-Stellenmarkt Trends, IT-Personalvermittlung
+  - generic [ref=e105]:
+    - generic [ref=e106]:
+      - generic [ref=e107]:
+        - heading "Body (Markdown inkl. Shortcodes)" [level=2] [ref=e108]
+        - paragraph [ref=e109]: Hier entsteht der Artikeltext. Shortcodes lassen sich unten per Klick einfügen.
+      - generic [ref=e110]: Standard
+    - textbox "Gliederung, Text und Shortcodes einfügen..." [ref=e111]: "## IT-Arbeitsmarkt November 2025 - Wo bleibt der Herbst der Reformen? Heute ist der 01.12.2025 - Jahresendspurt! Genau aus diesem Grund halte ich mich heute sehr kurz! Nächstes Jahr wieder etwas mehr Prosa von ;) {{< space >}} Wie üblich beziehe ich mich wie immer auf die [Daten der Agentur für Arbeit und betrachte die konkreten Entwicklungen für November 2025](https://statistik.arbeitsagentur.de/SiteGlobals/Forms/Suche/Einzelheftsuche_Formular.html?topic_f=berufe-heft-kldb2010). Weitere Informationen und Begriffsdefinitionen findet ihr im ersten Artikel zum [IT-Arbeitsmarkt im April 2024]( https://dietechrecruiter.de/posts/it-arbeitsmarkt-deutschland-april-2024/). Wer lieber diesen IT-Arbeitsmarktbericht als Video sehen möchte, kann gerne auf [unserem Youtube-Kanal](https://www.youtube.com/channel/UCqwwrd5Duc4Dj1Ei1SzhwCA?sub_confirmation=1) vorbei schauen. {{< space >}} Zudem haben wir einen weiteren Kanal, der [Background Music / Deep Work Music für Coding](https://www.youtube.com/channel/UCPTo4HIU77uC3OgfEZfCt2A?sub_confirmation=1) etc. veröffentlicht. Gerne einfach im Hintergrund laufen lassen! ## Die Tech Recruiter - IT / Digital Personalvermittlung und IT Personalberatung aus Hamburg Wer sind die Tech Recruiter? Christian und ich sind die Gründer und Geschäftsführer von Die Tech Recruiter GmbH - die IT Personalvermittlung und IT Personalberatung aus Hamburg. Wie der Name bereits vermuten lässt, liegt der Schwerpunkt auf der Vermittlung von IT-Fach- und Führungskräften (Festanstellung). {{< space >}} Christian und ich kennen uns seit 2015 und haben letztes Jahr den Schritt in die Selbstständigkeit gewagt! Im Herzen sind wir Nerds, sodass wir unseren Job als IT Personalberater und IT Personalvermittler einfach lieben! {{< space >}} Unser Ziel ist es, Unternehmen und Talente einfacher, schneller und besser zusammenzubringen und bisher scheint unser Plan aufzugehen! Bei Fragen hierzu melde dich [gerne direkt bei uns.](mailto:br@dietechrecruiter.de) {{< space >}} Solltest du aktuell auf der Suche nach einer neuen Herausforderung sein, lohnt sich ein Blick auf unser [IT-Job Board](https://dietechrecruiter.de/jobs#jobboard). ## Wie viele Informatiker sind aktuell arbeitslos? Stand November 2025 Im November 2025 sind in der Berufshauptgruppe 43 “Informatik- und andere IKT-Berufe” 56.909 Personen als arbeitslos und 89.416 Personen als arbeitssuchend gemeldet. Damit stehen 146.325 ITler dem Arbeitsmarkt bzw. den Unternehmen als Fach- und Führungskräfte zur Verfügung. In den Vormonaten Oktober und September waren es 145.316 bzw. 145.221. {{< space >}} **1000!** Eintausend Personen sind mehr bei der Agentur für Arbeit als arbeitslos bzw. arbeitssuchend registriert - und dies innerhalb von nur einem Monat. {{< space >}} Ich komme gebürtig aus Bremerhaven mit knapp 120.000 Einwohnern - mir ist bewusst, dass Bremerhaven nicht das beste Beispiel zum Thema Arbeitslosigkeit ist, aber wenn ich mir vorstelle, dass einfach Jeder aus BHV + ein paar Dörfer ringsherum Arbeitslos bzw. Arbeitssuchend ist, ist es schon echt erschreckend. {{< space >}} Der Jahresvergleich macht es deutlich: Im November 2024 waren 45.705 ITler arbeitslos und 75.579 als arbeitssuchend bei der Agentur für Arbeit registriert. In den letzten 12 Monaten sind die IT-Arbeitslosen und IT-Arbeitssuchenden um 24,5% und 18,3% angestiegen. ## Wie viele IT-Stellen sind offen? Aktueller IT Jobmarkt November 2025 Deutschland Im November 2025 wurden 11.668 neue IT Jobs bei der AfA neu registriert. In den Monaten Oktober und September waren es noch 11.736 bzw. 11.942. {{< space >}} Wiederkehrende Leser wissen noch, dass ich die 12k Marke an neuen IT Jobs als wichtigen Punkt definiert hatte - jetzt bin ich gespannt, ob wir kurzfristig auch die Marke von 11k neuen IT Jobs fallen sehen werden. {{< space >}} Im November 2024 waren es noch 14.450 neu registrierte IT Jobs - dies stellt einen Rückgang der Nachfrage nach IT-Fach- und Führungskräften um -19,3% da. {{< chart_itmarket_all from=\"2024-04\" to=\"2025-11\" width=\"960\" height=\"540\" title=\"Entwicklung IT Arbeitsmarkt Deutschland\" >}} In der folgenden Tabelle ist die monatliche Entwicklung dargestellt: {{< itmarket_table type=\"it_aggregate\" from=\"2024-04\" to=\"2025-11\" >}} Tabelle 1:“Entwicklung Arbeitslose und Arbeitssuchende Berufshauptgruppe 43 “Informatik- und andere IKT-Berufe” seit April 2024” {{< space >}} In Tabelle 2 “Gemeldete IT-Jobs” sehen wir die detaillierte Entwicklung seit April 2024 {{< itmarket_table type=\"it_jobs\" from=\"2024-04\" to=\"2025-11\" >}} ## IT Arbeitsmarkt im Vergleich zum gesamten Arbeitsmarkt in Deutschland November 2025 Von zuletzt 2,91 Millionen ist die Anzahl der Arbeitslosen weiter leicht zurückgegangen - auf 2.89 Millionen. In der Tabelle 3 “IT Arbeitsmarkt und Arbeitsmarkt Deutschland gesamt - November 2025” sehen wir die Veränderungen des gesamten Arbeitsmarkts im Jahresvergleich. {{< space >}} Die Entwicklung ist natürlich nicht positiv, aber wir würden uns über diese Zahlen im IT Arbeitsmarkt sicherlich freuen. {{< itmarket_table type=\"compare\" month=\"2025-11\" >}} Tabelle 3:“IT Arbeitsmarkt und Arbeitsmarkt Deutschland gesamt - November 2025” ## Wie sieht die Entwicklung des IT Arbeitsmarktes im Bereich der IT Infrastruktur und der Softwareentwicklung aktuell aus? Stand November 2025 Im November 2025 waren 22.965 Personen arbeitslos und 14.492 als arbeitssuchend im IT-Infrastruktur Bereich registriert. {{< space >}} Ursache ist wahrscheinlich der anhaltende negative Trend bei der Anzahl der IT-Jobs im Bereich IT-Infrastruktur. Im November wurden 2.740 neue IT Jobs registriert. In den Vormonaten waren es noch 2.800 bzw. 2.872. Im Jahresvergleich stieg die Anzahl der Arbeitslosen um 26,1% und die der Arbeitsuchenden im Bereich IT-Infrastruktur um 18,8%. Vgl. hierzu nachfolgende Grafik: {{< chart_itmarket_all aggKey=\"infra_aggregate\" jobsKey=\"infra_jobs\" from=\"2024-04\" to=\"2025-11\" width=\"960\" height=\"540\" title=\"Entwicklung IT-Arbeitsmarkt - IT Infrastruktur\" >}} Grafik 2: November 2025 - Entwicklung IT Arbeitsmarkt für den Bereich IT Infrastruktur seit April 2024 - Daten der Agentur für Arbeit - Berechnung und Darstellung durch Die Tech Recruiter GmbH ## Wie viele Softwareentwickler sind in Deutschland arbeitslos? Stand November 2025 Im November 2025 sind 18.842 Softwareentwickler arbeitslos. Darüber hinaus sind 29.596 Devs als arbeitssuchend bei der AfA registriert. {{< space >}} Wichtig und positiv: Die Anzahl der arbeitslosen Softwareentwickler ist weiterhin seit August 2025 rückläufig. Genug gefreut: im Jahresvergleich sehen wir eine Steigerung von 27,3% bei den arbeitslosen Softwareentwicklern und 20,2% mehr Arbeitssuchende. {{< chart_itmarket_all aggKey=\"software_aggregate\" jobsKey=\"software_jobs\" from=\"2024-04\" to=\"2025-11\" width=\"960\" height=\"540\" title=\"Entwicklung IT-Arbeitsmarkt - Software Entwicklung\" >}} Grafik 3: November 2025 - Entwicklung IT Arbeitsmarkt für den Bereich Softwareentwicklung seit April 2024 - Daten der Agentur für Arbeit - Berechnung und Darstellung durch Die Tech Recruiter GmbH ## Fazit IT-Arbeitsmarkt November 2025 als IT-Personalvermittler und IT-Personalberater Ich halte es heute mit Einstein \"Die reinste Form des Wahnsinns ist es, alles beim Alten zu lassen und gleichzeitig zu hoffen, dass sich etwas ändert.\" {{< space >}} Wenn sich nichts ändert, wird sich auch nichts ändern. Ich bin von Grund auf Optimist, dennoch: Wenn die Politik inkl. Regierung nicht kurzfristig richtig ins Handeln kommt, werden viele strukturelle Schäden am und im Wirtschaftsstandort Deutschland entstehen. {{< space >}} Ich bleibe bei meiner Kausalkette: Politik schafft Vertrauen und Planungssicherheit für die Wirtschaft. Wirtschaft fängt an zu investieren. Investitionen bedeuten mehr Personalbedarf… {{< space >}} Kommen wir zu einem weiteren wichtigen Thema: wir suchen noch passende Talente: {{< space >}} - [ELO DMS Administrator (gn) - Osnabrück / remote / bis zu 70.000 Euro](https://dietechrecruiter.de/jobs/elo-it-administrator-osnabrueck-vac-2294/) - [Node Backend Entwickler [m/w/d] - Hamburg / Berlin - Hybrid / bis zu 90.000 Euro](https://dietechrecruiter.de/jobs/node-backend-entwickler-hamburg-berlin-vac-2304/) - [Technical Program Manager [m/w/d] - Hamburg / Hybrid / bis zu 95.000 Euro](https://dietechrecruiter.de/jobs/technical-program-manager-hamburg-berlin-vac-2303/) - [Engineering Manager [m/w/d] – Software Development - Remote / bis zu 110.000 Euro](https://dietechrecruiter.de/jobs/engineering-manager-remote-job-vac-2300/) {{< space >}} Schaut gerne vorbei und meldet euch bei Fragen und Anregungen: br@dietechrecruiter.de"
+  - generic [ref=e112]:
+    - generic [ref=e113]:
+      - generic [ref=e114]:
+        - heading "FAQ" [level=2] [ref=e115]
+        - paragraph [ref=e116]: Fragen & Antworten ergänzen.
+      - button "Frage hinzufügen" [ref=e117] [cursor=pointer]
+    - generic [ref=e118]:
+      - generic [ref=e119]:
+        - generic [ref=e120]:
+          - paragraph [ref=e121]: "FAQ #1"
+          - button "Entfernen" [ref=e122] [cursor=pointer]
+        - generic [ref=e123]:
+          - generic [ref=e124]:
+            - generic [ref=e125]: Frage
+            - textbox [ref=e126]: Wie viele Informatiker sind aktuell arbeitslos? Stand November 2025
+          - generic [ref=e127]:
+            - generic [ref=e128]: Antwort
+            - textbox [ref=e129]: Im November 2025 sind in der Berufshauptgruppe 43 “Informatik- und andere IKT-Berufe” 56.909 Personen als arbeitslos und 89.416 Personen als arbeitssuchend gemeldet. Damit stehen 146.325 ITler dem Arbeitsmarkt bzw. den Unternehmen als Fach- und Führungskräfte zur Verfügung. In den Vormonaten Oktober und September waren es 145.316 bzw. 145.221.
+      - generic [ref=e130]:
+        - generic [ref=e131]:
+          - paragraph [ref=e132]: "FAQ #2"
+          - button "Entfernen" [ref=e133] [cursor=pointer]
+        - generic [ref=e134]:
+          - generic [ref=e135]:
+            - generic [ref=e136]: Frage
+            - textbox [ref=e137]: Wie viele IT-Stellen sind offen? Aktueller IT Jobmarkt November 2025 Deutschland
+          - generic [ref=e138]:
+            - generic [ref=e139]: Antwort
+            - textbox [ref=e140]: Im November 2025 wurden 11.668 neue IT Jobs bei der AfA neu registriert. In den Monaten Oktober und September waren es noch 11.736 bzw. 11.942.
+      - generic [ref=e141]:
+        - generic [ref=e142]:
+          - paragraph [ref=e143]: "FAQ #3"
+          - button "Entfernen" [ref=e144] [cursor=pointer]
+        - generic [ref=e145]:
+          - generic [ref=e146]:
+            - generic [ref=e147]: Frage
+            - textbox [ref=e148]: Wie viele Softwareentwickler sind in Deutschland arbeitslos? Stand November 2025
+          - generic [ref=e149]:
+            - generic [ref=e150]: Antwort
+            - textbox [ref=e151]: "Im November 2025 sind 18.842 Softwareentwickler arbeitslos. Darüber hinaus sind 29.596 Devs als arbeitssuchend bei der AfA registriert. Wichtig und positiv: Die Anzahl der arbeitslosen Softwareentwickler ist weiterhin seit August 2025 rückläufig."
+  - generic [ref=e152]:
+    - generic [ref=e153]:
+      - generic [ref=e154]:
+        - heading "Shortcodes" [level=2] [ref=e155]
+        - paragraph [ref=e156]: Space, Charts und Tabellen konfigurieren – per Klick in den Body übernehmen.
+      - generic [ref=e157]: Standard
+      - generic [ref=e158]:
+        - button "Space" [ref=e159] [cursor=pointer]
+        - button "Chart" [ref=e160] [cursor=pointer]
+        - button "Tabelle" [ref=e161] [cursor=pointer]
+    - paragraph [ref=e163]: Noch keine Shortcodes hinzugefügt.
+  - generic [ref=e164]:
+    - heading "Monthly TOML Vorschau" [level=2] [ref=e165]
+    - paragraph [ref=e166]: Nur Lesen – Daten stammen aus docs/monthly.toml.
+    - generic [ref=e167]:
+      - generic [ref=e168]:
+        - paragraph [ref=e169]: Letzter IT-Aggregat Monat
+        - list [ref=e170]:
+          - listitem [ref=e171]: "Monat: November 2025"
+          - listitem [ref=e172]: "Arbeitslos: 56.909"
+          - listitem [ref=e173]: "Suchend: 89.416"
+      - generic [ref=e174]:
+        - paragraph [ref=e175]: Letzte IT-Jobs
+        - list [ref=e176]:
+          - listitem [ref=e177]: "Monat: November 2025"
+          - listitem [ref=e178]: "Neue IT-Jobs: 11.668"
+  - generic [ref=e179]:
+    - generic [ref=e180]:
+      - generic [ref=e181]:
+        - heading "Preview & Export" [level=2] [ref=e182]
+        - paragraph [ref=e183]: Frontmatter + Body prüfen, dann kopieren oder herunterladen.
+      - generic [ref=e184]:
+        - button "Kopieren" [ref=e185] [cursor=pointer]
+        - button "Download (.md)" [ref=e186] [cursor=pointer]
+    - generic [ref=e187]: "+++ title = \"IT-Arbeitsmarkt November 2025 - Wo bleibt der Herbst der Reformen?\" description = \"November 2025: 146.325 IT-Fachkräfte arbeitslos/arbeitssuchend, nur 11.668 neue IT-Jobs. Trend zeigt weiter nach unten\" date = \"2025-12-02T09:00:00+02:00\" draft = false image = \"/Bilder/Startseite/Blog/it-arbeitsmarkt-thumbnail-november-2025.webp\" imageAlt = \"Schriftzug IT Arbeitsmarkt November 2025. Firma Die Tech Recruiter GmbH\" slug = \"/it-arbeitsmarkt-november-2025\" author = \"Björn-Richter\" categories = [ \"Reports\" ] tags = [ \"IT Arbeitsmarkt\", \"Q4/2025\", \"November 2025\" ] jobSnippedTag = \"management\" lesedauer = \"5 Minuten\" zielgruppe = [ \"Für Arbeitgeber\", \"IT-Talente\" ] Keywords = [ \"IT-Arbeitsmarkt 2025\", \"IT-Arbeitsmarkt November 2025\", \"IT Jobmarkt Deutschland\", \"IT-Fachkräfte Deutschland\", \"IT-Jobs Rückgang\", \"Tech-Layoffs 2025\", \"Arbeitsmarktbericht IT\", \"Softwareentwickler Arbeitslosigkeit\", \"IT-Infrastruktur Jobs\", \"Agentur für Arbeit IT\", \"IT-Stellenmarkt Trends\", \"IT-Personalvermittlung\" ] summary = \"November 2025: 146.325 IT-Fachkräfte arbeitslos/arbeitssuchend. Nur 11.668 neue IT-Jobs – dritter Monat unter 12k, -19,3 % im Jahresvergleich. IT-Infrastruktur: Arbeitslosigkeit steigt weiter, Jobangebot sinkt erneut. Softwareentwicklung: Positive Ausnahme – arbeitslose Devs weiterhin rückläufig (seit August). Gesamtbild: keine Trendwende, Reformen bleiben aus – Unsicherheit bremst die Nachfrage.\" [[faq]] question = \"Wie viele Informatiker sind aktuell arbeitslos? Stand November 2025\" answer = \"Im November 2025 sind in der Berufshauptgruppe 43 “Informatik- und andere IKT-Berufe” 56.909 Personen als arbeitslos und 89.416 Personen als arbeitssuchend gemeldet. Damit stehen 146.325 ITler dem Arbeitsmarkt bzw. den Unternehmen als Fach- und Führungskräfte zur Verfügung. In den Vormonaten Oktober und September waren es 145.316 bzw. 145.221.\" [[faq]] question = \"Wie viele IT-Stellen sind offen? Aktueller IT Jobmarkt November 2025 Deutschland\" answer = \"Im November 2025 wurden 11.668 neue IT Jobs bei der AfA neu registriert. In den Monaten Oktober und September waren es noch 11.736 bzw. 11.942.\" [[faq]] question = \"Wie viele Softwareentwickler sind in Deutschland arbeitslos? Stand November 2025\" answer = \"Im November 2025 sind 18.842 Softwareentwickler arbeitslos. Darüber hinaus sind 29.596 Devs als arbeitssuchend bei der AfA registriert. Wichtig und positiv: Die Anzahl der arbeitslosen Softwareentwickler ist weiterhin seit August 2025 rückläufig.\" +++ ## IT-Arbeitsmarkt November 2025 - Wo bleibt der Herbst der Reformen? Heute ist der 01.12.2025 - Jahresendspurt! Genau aus diesem Grund halte ich mich heute sehr kurz! Nächstes Jahr wieder etwas mehr Prosa von ;) {{< space >}} Wie üblich beziehe ich mich wie immer auf die [Daten der Agentur für Arbeit und betrachte die konkreten Entwicklungen für November 2025](https://statistik.arbeitsagentur.de/SiteGlobals/Forms/Suche/Einzelheftsuche_Formular.html?topic_f=berufe-heft-kldb2010). Weitere Informationen und Begriffsdefinitionen findet ihr im ersten Artikel zum [IT-Arbeitsmarkt im April 2024]( https://dietechrecruiter.de/posts/it-arbeitsmarkt-deutschland-april-2024/). Wer lieber diesen IT-Arbeitsmarktbericht als Video sehen möchte, kann gerne auf [unserem Youtube-Kanal](https://www.youtube.com/channel/UCqwwrd5Duc4Dj1Ei1SzhwCA?sub_confirmation=1) vorbei schauen. {{< space >}} Zudem haben wir einen weiteren Kanal, der [Background Music / Deep Work Music für Coding](https://www.youtube.com/channel/UCPTo4HIU77uC3OgfEZfCt2A?sub_confirmation=1) etc. veröffentlicht. Gerne einfach im Hintergrund laufen lassen! ## Die Tech Recruiter - IT / Digital Personalvermittlung und IT Personalberatung aus Hamburg Wer sind die Tech Recruiter? Christian und ich sind die Gründer und Geschäftsführer von Die Tech Recruiter GmbH - die IT Personalvermittlung und IT Personalberatung aus Hamburg. Wie der Name bereits vermuten lässt, liegt der Schwerpunkt auf der Vermittlung von IT-Fach- und Führungskräften (Festanstellung). {{< space >}} Christian und ich kennen uns seit 2015 und haben letztes Jahr den Schritt in die Selbstständigkeit gewagt! Im Herzen sind wir Nerds, sodass wir unseren Job als IT Personalberater und IT Personalvermittler einfach lieben! {{< space >}} Unser Ziel ist es, Unternehmen und Talente einfacher, schneller und besser zusammenzubringen und bisher scheint unser Plan aufzugehen! Bei Fragen hierzu melde dich [gerne direkt bei uns.](mailto:br@dietechrecruiter.de) {{< space >}} Solltest du aktuell auf der Suche nach einer neuen Herausforderung sein, lohnt sich ein Blick auf unser [IT-Job Board](https://dietechrecruiter.de/jobs#jobboard). ## Wie viele Informatiker sind aktuell arbeitslos? Stand November 2025 Im November 2025 sind in der Berufshauptgruppe 43 “Informatik- und andere IKT-Berufe” 56.909 Personen als arbeitslos und 89.416 Personen als arbeitssuchend gemeldet. Damit stehen 146.325 ITler dem Arbeitsmarkt bzw. den Unternehmen als Fach- und Führungskräfte zur Verfügung. In den Vormonaten Oktober und September waren es 145.316 bzw. 145.221. {{< space >}} **1000!** Eintausend Personen sind mehr bei der Agentur für Arbeit als arbeitslos bzw. arbeitssuchend registriert - und dies innerhalb von nur einem Monat. {{< space >}} Ich komme gebürtig aus Bremerhaven mit knapp 120.000 Einwohnern - mir ist bewusst, dass Bremerhaven nicht das beste Beispiel zum Thema Arbeitslosigkeit ist, aber wenn ich mir vorstelle, dass einfach Jeder aus BHV + ein paar Dörfer ringsherum Arbeitslos bzw. Arbeitssuchend ist, ist es schon echt erschreckend. {{< space >}} Der Jahresvergleich macht es deutlich: Im November 2024 waren 45.705 ITler arbeitslos und 75.579 als arbeitssuchend bei der Agentur für Arbeit registriert. In den letzten 12 Monaten sind die IT-Arbeitslosen und IT-Arbeitssuchenden um 24,5% und 18,3% angestiegen. ## Wie viele IT-Stellen sind offen? Aktueller IT Jobmarkt November 2025 Deutschland Im November 2025 wurden 11.668 neue IT Jobs bei der AfA neu registriert. In den Monaten Oktober und September waren es noch 11.736 bzw. 11.942. {{< space >}} Wiederkehrende Leser wissen noch, dass ich die 12k Marke an neuen IT Jobs als wichtigen Punkt definiert hatte - jetzt bin ich gespannt, ob wir kurzfristig auch die Marke von 11k neuen IT Jobs fallen sehen werden. {{< space >}} Im November 2024 waren es noch 14.450 neu registrierte IT Jobs - dies stellt einen Rückgang der Nachfrage nach IT-Fach- und Führungskräften um -19,3% da. {{< chart_itmarket_all from=\"2024-04\" to=\"2025-11\" width=\"960\" height=\"540\" title=\"Entwicklung IT Arbeitsmarkt Deutschland\" >}} In der folgenden Tabelle ist die monatliche Entwicklung dargestellt: {{< itmarket_table type=\"it_aggregate\" from=\"2024-04\" to=\"2025-11\" >}} Tabelle 1:“Entwicklung Arbeitslose und Arbeitssuchende Berufshauptgruppe 43 “Informatik- und andere IKT-Berufe” seit April 2024” {{< space >}} In Tabelle 2 “Gemeldete IT-Jobs” sehen wir die detaillierte Entwicklung seit April 2024 {{< itmarket_table type=\"it_jobs\" from=\"2024-04\" to=\"2025-11\" >}} ## IT Arbeitsmarkt im Vergleich zum gesamten Arbeitsmarkt in Deutschland November 2025 Von zuletzt 2,91 Millionen ist die Anzahl der Arbeitslosen weiter leicht zurückgegangen - auf 2.89 Millionen. In der Tabelle 3 “IT Arbeitsmarkt und Arbeitsmarkt Deutschland gesamt - November 2025” sehen wir die Veränderungen des gesamten Arbeitsmarkts im Jahresvergleich. {{< space >}} Die Entwicklung ist natürlich nicht positiv, aber wir würden uns über diese Zahlen im IT Arbeitsmarkt sicherlich freuen. {{< itmarket_table type=\"compare\" month=\"2025-11\" >}} Tabelle 3:“IT Arbeitsmarkt und Arbeitsmarkt Deutschland gesamt - November 2025” ## Wie sieht die Entwicklung des IT Arbeitsmarktes im Bereich der IT Infrastruktur und der Softwareentwicklung aktuell aus? Stand November 2025 Im November 2025 waren 22.965 Personen arbeitslos und 14.492 als arbeitssuchend im IT-Infrastruktur Bereich registriert. {{< space >}} Ursache ist wahrscheinlich der anhaltende negative Trend bei der Anzahl der IT-Jobs im Bereich IT-Infrastruktur. Im November wurden 2.740 neue IT Jobs registriert. In den Vormonaten waren es noch 2.800 bzw. 2.872. Im Jahresvergleich stieg die Anzahl der Arbeitslosen um 26,1% und die der Arbeitsuchenden im Bereich IT-Infrastruktur um 18,8%. Vgl. hierzu nachfolgende Grafik: {{< chart_itmarket_all aggKey=\"infra_aggregate\" jobsKey=\"infra_jobs\" from=\"2024-04\" to=\"2025-11\" width=\"960\" height=\"540\" title=\"Entwicklung IT-Arbeitsmarkt - IT Infrastruktur\" >}} Grafik 2: November 2025 - Entwicklung IT Arbeitsmarkt für den Bereich IT Infrastruktur seit April 2024 - Daten der Agentur für Arbeit - Berechnung und Darstellung durch Die Tech Recruiter GmbH ## Wie viele Softwareentwickler sind in Deutschland arbeitslos? Stand November 2025 Im November 2025 sind 18.842 Softwareentwickler arbeitslos. Darüber hinaus sind 29.596 Devs als arbeitssuchend bei der AfA registriert. {{< space >}} Wichtig und positiv: Die Anzahl der arbeitslosen Softwareentwickler ist weiterhin seit August 2025 rückläufig. Genug gefreut: im Jahresvergleich sehen wir eine Steigerung von 27,3% bei den arbeitslosen Softwareentwicklern und 20,2% mehr Arbeitssuchende. {{< chart_itmarket_all aggKey=\"software_aggregate\" jobsKey=\"software_jobs\" from=\"2024-04\" to=\"2025-11\" width=\"960\" height=\"540\" title=\"Entwicklung IT-Arbeitsmarkt - Software Entwicklung\" >}} Grafik 3: November 2025 - Entwicklung IT Arbeitsmarkt für den Bereich Softwareentwicklung seit April 2024 - Daten der Agentur für Arbeit - Berechnung und Darstellung durch Die Tech Recruiter GmbH ## Fazit IT-Arbeitsmarkt November 2025 als IT-Personalvermittler und IT-Personalberater Ich halte es heute mit Einstein \"Die reinste Form des Wahnsinns ist es, alles beim Alten zu lassen und gleichzeitig zu hoffen, dass sich etwas ändert.\" {{< space >}} Wenn sich nichts ändert, wird sich auch nichts ändern. Ich bin von Grund auf Optimist, dennoch: Wenn die Politik inkl. Regierung nicht kurzfristig richtig ins Handeln kommt, werden viele strukturelle Schäden am und im Wirtschaftsstandort Deutschland entstehen. {{< space >}} Ich bleibe bei meiner Kausalkette: Politik schafft Vertrauen und Planungssicherheit für die Wirtschaft. Wirtschaft fängt an zu investieren. Investitionen bedeuten mehr Personalbedarf… {{< space >}} Kommen wir zu einem weiteren wichtigen Thema: wir suchen noch passende Talente: {{< space >}} - [ELO DMS Administrator (gn) - Osnabrück / remote / bis zu 70.000 Euro](https://dietechrecruiter.de/jobs/elo-it-administrator-osnabrueck-vac-2294/) - [Node Backend Entwickler [m/w/d] - Hamburg / Berlin - Hybrid / bis zu 90.000 Euro](https://dietechrecruiter.de/jobs/node-backend-entwickler-hamburg-berlin-vac-2304/) - [Technical Program Manager [m/w/d] - Hamburg / Hybrid / bis zu 95.000 Euro](https://dietechrecruiter.de/jobs/technical-program-manager-hamburg-berlin-vac-2303/) - [Engineering Manager [m/w/d] – Software Development - Remote / bis zu 110.000 Euro](https://dietechrecruiter.de/jobs/engineering-manager-remote-job-vac-2300/) {{< space >}} Schaut gerne vorbei und meldet euch bei Fragen und Anregungen: br@dietechrecruiter.de"
+  - generic [ref=e188]:
+    - generic [ref=e189]:
+      - generic [ref=e190]:
+        - heading "Monatsdaten (TOML)" [level=2] [ref=e191]
+        - paragraph [ref=e192]: Monat eintragen, Zahlen ergänzen, dann in monatly.toml übernehmen.
+      - generic [ref=e193]: Standard
+      - button "TOML kopieren" [ref=e195] [cursor=pointer]
+    - generic [ref=e196]:
+      - generic [ref=e197]:
+        - generic [ref=e198]:
+          - generic [ref=e199]: Monat (YYYY-MM)
+          - generic [ref=e200]: Standard
+        - textbox [ref=e201]: 2025-11
+      - generic [ref=e202]:
+        - generic [ref=e203]:
+          - generic [ref=e204]: Label (z. B. Dezember 2025)
+          - generic [ref=e205]: Standard
+        - textbox [ref=e206]: November 2025
+    - generic [ref=e207]:
+      - generic [ref=e208]:
+        - heading "IT Aggregate" [level=3] [ref=e209]
+        - generic [ref=e210]:
+          - generic [ref=e211]:
+            - generic [ref=e212]: Arbeitslos
+            - generic [ref=e213]: Standard
+          - spinbutton [ref=e214]: "56909"
+          - generic [ref=e215]:
+            - generic [ref=e216]: Suchend
+            - generic [ref=e217]: Standard
+          - spinbutton [ref=e218]: "89416"
+      - generic [ref=e219]:
+        - heading "IT Jobs (gesamt)" [level=3] [ref=e220]
+        - generic [ref=e221]:
+          - generic [ref=e222]: Neue IT Jobs
+          - generic [ref=e223]: Standard
+        - spinbutton [ref=e224]: "11668"
+      - generic [ref=e225]:
+        - heading "Deutschland gesamt" [level=3] [ref=e226]
+        - generic [ref=e227]:
+          - generic [ref=e228]:
+            - generic [ref=e229]: Arbeitslose
+            - generic [ref=e230]: Standard
+          - spinbutton [ref=e231]: "2885087"
+        - generic [ref=e232]:
+          - generic [ref=e233]:
+            - generic [ref=e234]: Suchend
+            - generic [ref=e235]: Standard
+          - spinbutton [ref=e236]: "4625403"
+        - generic [ref=e237]:
+          - generic [ref=e238]:
+            - generic [ref=e239]: Jobs
+            - generic [ref=e240]: Standard
+          - spinbutton [ref=e241]: "623934"
+      - generic [ref=e242]:
+        - heading "IT Infrastruktur" [level=3] [ref=e243]
+        - generic [ref=e244]:
+          - generic [ref=e245]: Arbeitslos
+          - generic [ref=e246]: Standard
+        - spinbutton [ref=e247]: "14492"
+        - generic [ref=e248]:
+          - generic [ref=e249]: Suchend
+          - generic [ref=e250]: Standard
+        - spinbutton [ref=e251]: "22965"
+        - generic [ref=e252]:
+          - generic [ref=e253]: Neue Jobs
+          - generic [ref=e254]: Standard
+        - spinbutton [ref=e255]: "2740"
+      - generic [ref=e256]:
+        - heading "Softwareentwicklung" [level=3] [ref=e257]
+        - generic [ref=e258]:
+          - generic [ref=e259]: Arbeitslos
+          - generic [ref=e260]: Standard
+        - spinbutton [ref=e261]: "18842"
+        - generic [ref=e262]:
+          - generic [ref=e263]: Suchend
+          - generic [ref=e264]: Standard
+        - spinbutton [ref=e265]: "29596"
+        - generic [ref=e266]:
+          - generic [ref=e267]: Neue Jobs
+          - generic [ref=e268]: Standard
+        - spinbutton [ref=e269]: "1856"
+    - generic [ref=e270]: "[[it_aggregate]] month = \"2025-11\" label = \"November 2025\" unemployed = 56909 seeking = 89416 [[it_jobs]] month = \"2025-11\" label = \"November 2025\" it_jobs = 11668 [[germany]] month = \"2025-11\" label = \"11/25\" unemployed = 2885087 seeking = 4625403 jobs = 623934 [[infra_aggregate]] month = \"2025-11\" label = \"November 2025\" unemployed = 14492 seeking = 22965 [[infra_jobs]] month = \"2025-11\" label = \"November 2025\" it_jobs = 2740 [[software_aggregate]] month = \"2025-11\" label = \"November 2025\" unemployed = 18842 seeking = 29596 [[software_jobs]] month = \"2025-11\" label = \"November 2025\" it_jobs = 1856"
+```
