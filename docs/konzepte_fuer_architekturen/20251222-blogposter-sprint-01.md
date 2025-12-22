@@ -38,8 +38,8 @@ Zu jeder Phase entsteht ein Commit und eine Statusnotiz (siehe unten).
 
 | Nr. | Frage | Antwort | Datum |
 | --- | ----- | ------- | ----- |
-| 1 | Soll der Export Dateiname fest sein (z. B. aus slug)? | Offene Entscheidung | 2025-12-22 |
-| 2 | Müssen wir bereits eine Upload-Option (z. B. Git push) bieten? | Nein, reicht lokaler Download | 2025-12-22 |
+| 1 | Soll der Export Dateiname fest sein (z. B. aus slug)? | Ja, Dateiname aus `slug` ableiten (z. B. `slug.md`). | 2025-12-22 |
+| 2 | Müssen wir bereits eine Upload-Option (z. B. Git push) bieten? | Nein, lokaler Download reicht. | 2025-12-22 |
 
 ## Statusnotizen
 
