@@ -59,6 +59,10 @@ globals:
     - 'Alle Markt-Datenänderungen in docs/ müssen nachvollziehbar sein (Quelle, Berechnung); keine manuellen Zahlen direkt im Lauftext ohne Kommentar.'
     - 'UX darf kein unescaped HTML rendern; Markdown-Vorschau nutzt Sanitizer/Safe-List.'
     - 'Kommunikation mit Stakeholdern erfolgt in einfacher, deutscher Alltagssprache; Fachbegriffe werden sofort erklärt.'
+  process:
+    - 'Jeder Sprint startet mit einer Konzeptdatei unter docs/konzepte_fuer_architekturen/ (z. B. YYYYMMDD-thema.md). Diese enthält Ziel, Weg, Akzeptanzkriterien sowie einen kleinschrittigen Phasenplan.'
+    - 'Bevor Phase 1 beginnt, werden alle offenen Fragen und Antworten in der Konzeptdatei dokumentiert (inkl. Datum/Autor).'
+    - 'Nach Abschluss jeder Phase wird in der Konzeptdatei eine Statusnotiz ergänzt (Ergebnis, Datum, Referenz-Commit). Jede Phase endet mit einem eigenen Commit.'
   conventions:
     clean_code:
       - 'Frontend: TypeScript strict, dedizierte Module für Frontmatter-Schema, Section-Presets und Shortcode-Serialisierung; keine Copy-Paste-Markdown-Strings.'
@@ -210,6 +214,7 @@ playbooks:
     title: 'Neuen IT-Arbeitsmarktbericht erstellen'
     steps:
       - 'Kurz-Check-in mit der Autorin/dem Autor: Thema, Zielgruppe, Datenstand, gewünschte Assets klären (Fragen & Antworten dokumentieren).'
+      - 'Sprint-Kickoff-Konzeptdatei anlegen/aktualisieren (Ziel, Weg, Akzeptanzkriterien, Phasenplan) und nächste Phase markieren.'
       - 'Daten aktualisieren: docs/monthly.toml prüfen/ergänzen (Quelle dokumentieren).'
       - 'npm ci --prefix frontend || npm --prefix frontend install'
       - 'npm --prefix frontend run dev (Form & Preview testen).'
@@ -242,6 +247,15 @@ playbooks:
       - 'CI: build/lint/typecheck/test ok; Markdown-Sample generiert und angehängt.'
       - 'Deploy Preview (z. B. Vercel/Netlify) + Smoke (author-report Playbook).'
       - 'Tag & Release Notes veröffentlichen.'
+
+  - id: sprint-kickoff
+    title: 'Sprint starten (Konzeptpflicht)'
+    steps:
+      - 'Mit Stakeholdern Scope klären → nummerierte Fragen stellen, Antworten sammeln.'
+      - 'Neue Markdown-Datei unter docs/konzepte_fuer_architekturen/YYYYMMDD-thema.md anlegen (Vorlage: Ziel, Weg, Akzeptanzkriterien, Phasenplan, Offene Fragen).'
+      - 'Offene Fragen + Antworten eintragen; erst wenn alles geklärt ist, Phase 1 starten.'
+      - 'Phasenplan in kleinschrittige Tasks zerlegen (jede Phase endet mit eigenem Commit).'
+      - 'Status-Abschnitt vorbereiten (Phase, Datum, Commit-Hash). Nach jeder Phase aktualisieren.'
 
 tasks:
   build:
