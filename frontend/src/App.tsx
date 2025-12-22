@@ -16,8 +16,28 @@ import { shortcodeSchema } from './lib/schemas/shortcodes';
 const FRONTMATTER_STORAGE_KEY = 'blogposter.frontmatter.v1';
 const SHORTCODES_STORAGE_KEY = 'blogposter.shortcodes.v1';
 const BODY_STORAGE_KEY = 'blogposter.body.v1';
+const MONTHLY_ENTRY_STORAGE_KEY = 'blogposter.monthly-entry.v1';
 
 const monthlyDataset = parseMonthlyToml(monthlyTomlSource);
+
+type MonthlyCategoryNumbers = {
+  unemployed?: number;
+  seeking?: number;
+  jobs?: number;
+  it_jobs?: number;
+};
+
+type MonthlyEntry = {
+  month: string;
+  label: string;
+  itAggregate: MonthlyCategoryNumbers;
+  itJobs: { it_jobs?: number };
+  germany: MonthlyCategoryNumbers;
+  infraAggregate: MonthlyCategoryNumbers;
+  infraJobs: { it_jobs?: number };
+  softwareAggregate: MonthlyCategoryNumbers;
+  softwareJobs: { it_jobs?: number };
+};
 
 const createDefaultShortcode = (type: Shortcode['type']): Shortcode => {
   if (type === 'space') {
@@ -77,6 +97,52 @@ const loadBodyFromStorage = (): string => {
   return window.localStorage.getItem(BODY_STORAGE_KEY) ?? defaultBody;
 };
 
+const deriveMonthlyDefaults = (): MonthlyEntry => {
+  const latestMonth = monthlyDataset.it_aggregate[0];
+  return {
+    month: latestMonth?.month ?? '2025-11',
+    label: latestMonth?.label ?? 'November 2025',
+    itAggregate: {
+      unemployed: latestMonth?.unemployed,
+      seeking: latestMonth?.seeking,
+    },
+    itJobs: {
+      it_jobs: monthlyDataset.it_jobs[0]?.it_jobs,
+    },
+    germany: {
+      unemployed: monthlyDataset.germany[0]?.unemployed,
+      seeking: monthlyDataset.germany[0]?.seeking,
+      jobs: monthlyDataset.germany[0]?.jobs,
+    },
+    infraAggregate: {
+      unemployed: monthlyDataset.infra_aggregate[0]?.unemployed,
+      seeking: monthlyDataset.infra_aggregate[0]?.seeking,
+    },
+    infraJobs: {
+      it_jobs: monthlyDataset.infra_jobs[0]?.it_jobs,
+    },
+    softwareAggregate: {
+      unemployed: monthlyDataset.software_aggregate[0]?.unemployed,
+      seeking: monthlyDataset.software_aggregate[0]?.seeking,
+    },
+    softwareJobs: {
+      it_jobs: monthlyDataset.software_jobs[0]?.it_jobs,
+    },
+  };
+};
+
+const loadMonthlyEntryFromStorage = (): MonthlyEntry => {
+  if (typeof window === 'undefined') return deriveMonthlyDefaults();
+  const raw = window.localStorage.getItem(MONTHLY_ENTRY_STORAGE_KEY);
+  if (!raw) return deriveMonthlyDefaults();
+  try {
+    const parsed: MonthlyEntry = JSON.parse(raw);
+    return parsed;
+  } catch {
+    return deriveMonthlyDefaults();
+  }
+};
+
 const listToInput = (value: string[]) => value.join(', ');
 const inputToList = (value: string) =>
   value
@@ -119,14 +185,69 @@ const formatShortcode = (shortcode: Shortcode): string => {
 const latestAggregate = monthlyDataset.it_aggregate.at(0);
 const latestJobs = monthlyDataset.it_jobs.at(0);
 
+const serializeMonthlyEntry = (entry: MonthlyEntry) => {
+  const lines: string[] = [];
+  const push = (text: string) => lines.push(text);
+
+  push('[[it_aggregate]]');
+  push(`month = "${entry.month}"`);
+  push(`label = "${entry.label}"`);
+  push(`unemployed = ${entry.itAggregate.unemployed ?? 0}`);
+  push(`seeking = ${entry.itAggregate.seeking ?? 0}`);
+  push('');
+
+  push('[[it_jobs]]');
+  push(`month = "${entry.month}"`);
+  push(`label = "${entry.label}"`);
+  push(`it_jobs = ${entry.itJobs.it_jobs ?? 0}`);
+  push('');
+
+  push('[[germany]]');
+  push(`month = "${entry.month}"`);
+  push(`label = "${entry.month.split('-')[1]}/${entry.month.slice(2, 4)}"`);
+  push(`unemployed = ${entry.germany.unemployed ?? 0}`);
+  push(`seeking = ${entry.germany.seeking ?? 0}`);
+  push(`jobs = ${entry.germany.jobs ?? 0}`);
+  push('');
+
+  push('[[infra_aggregate]]');
+  push(`month = "${entry.month}"`);
+  push(`label = "${entry.label}"`);
+  push(`unemployed = ${entry.infraAggregate.unemployed ?? 0}`);
+  push(`seeking = ${entry.infraAggregate.seeking ?? 0}`);
+  push('');
+
+  push('[[infra_jobs]]');
+  push(`month = "${entry.month}"`);
+  push(`label = "${entry.label}"`);
+  push(`it_jobs = ${entry.infraJobs.it_jobs ?? 0}`);
+  push('');
+
+  push('[[software_aggregate]]');
+  push(`month = "${entry.month}"`);
+  push(`label = "${entry.label}"`);
+  push(`unemployed = ${entry.softwareAggregate.unemployed ?? 0}`);
+  push(`seeking = ${entry.softwareAggregate.seeking ?? 0}`);
+  push('');
+
+  push('[[software_jobs]]');
+  push(`month = "${entry.month}"`);
+  push(`label = "${entry.label}"`);
+  push(`it_jobs = ${entry.softwareJobs.it_jobs ?? 0}`);
+
+  return lines.join('\n');
+};
+
 function App() {
   const [frontmatter, setFrontmatter] = useState<Frontmatter>(defaultFrontmatter);
   const [shortcodes, setShortcodes] = useState<Shortcode[]>(loadShortcodesFromStorage);
   const [body, setBody] = useState<string>(defaultBody);
+  const [monthlyEntry, setMonthlyEntry] = useState<MonthlyEntry>(deriveMonthlyDefaults());
 
   useEffect(() => {
     setFrontmatter(loadFrontmatterFromStorage());
     setBody(loadBodyFromStorage());
+    setMonthlyEntry(loadMonthlyEntryFromStorage());
   }, []);
 
   useEffect(() => {
@@ -143,6 +264,11 @@ function App() {
     if (typeof window === 'undefined') return;
     window.localStorage.setItem(BODY_STORAGE_KEY, body);
   }, [body]);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    window.localStorage.setItem(MONTHLY_ENTRY_STORAGE_KEY, JSON.stringify(monthlyEntry));
+  }, [monthlyEntry]);
 
   const frontmatterValidation = useMemo(
     () => frontmatterSchema.safeParse(frontmatter),
@@ -241,6 +367,44 @@ function App() {
       alert('Konnte nicht kopieren. Bitte manuell kopieren.');
     }
   };
+
+  const handleMonthlyField =
+    <K extends keyof MonthlyEntry>(field: K) =>
+    (event: ChangeEvent<HTMLInputElement>) => {
+      const value = event.target.value;
+      setMonthlyEntry((prev) => ({
+        ...prev,
+        [field]: value,
+      }));
+    };
+
+  const handleMonthlyNumbers =
+    (
+      bucket:
+        | 'itAggregate'
+        | 'itJobs'
+        | 'germany'
+        | 'infraAggregate'
+        | 'infraJobs'
+        | 'softwareAggregate'
+        | 'softwareJobs',
+      key: keyof MonthlyCategoryNumbers,
+    ) =>
+    (event: ChangeEvent<HTMLInputElement>) => {
+      const numeric = Number(event.target.value || 0);
+      setMonthlyEntry((prev) => ({
+        ...prev,
+        [bucket]: {
+          ...prev[bucket],
+          [key]: numeric,
+        },
+      }));
+    };
+
+  const monthlySnippet = useMemo(
+    () => serializeMonthlyEntry(monthlyEntry),
+    [monthlyEntry],
+  );
 
   return (
     <main className="mx-auto max-w-6xl space-y-10 px-4 py-10">
@@ -698,6 +862,146 @@ function App() {
         )}
         <pre className="mt-4 max-h-[420px] overflow-auto rounded-md border border-border bg-background p-4 text-sm">
           {markdownPreview || 'Noch kein Inhalt.'}
+        </pre>
+      </section>
+
+      <section className="rounded-lg border border-border bg-card p-6 shadow-sm">
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <h2 className="text-xl font-semibold">Monatsdaten (TOML)</h2>
+            <p className="text-sm text-muted-foreground">
+              Monat eintragen, Zahlen ergänzen, dann in monatly.toml übernehmen.
+            </p>
+          </div>
+          <div className="flex gap-2">
+            <button
+              className="rounded-md border border-input px-3 py-2 text-sm"
+              type="button"
+              onClick={() => navigator.clipboard.writeText(monthlySnippet)}
+            >
+              TOML kopieren
+            </button>
+          </div>
+        </div>
+        <div className="mt-4 grid gap-4 md:grid-cols-2">
+          <div className="flex flex-col gap-1">
+            <label className="text-sm font-medium">Monat (YYYY-MM)</label>
+            <input
+              className="rounded-md border border-input bg-background px-3 py-2 text-sm"
+              value={monthlyEntry.month}
+              onChange={handleMonthlyField('month')}
+            />
+          </div>
+          <div className="flex flex-col gap-1">
+            <label className="text-sm font-medium">Label (z. B. Dezember 2025)</label>
+            <input
+              className="rounded-md border border-input bg-background px-3 py-2 text-sm"
+              value={monthlyEntry.label}
+              onChange={handleMonthlyField('label')}
+            />
+          </div>
+        </div>
+        <div className="mt-6 grid gap-4 md:grid-cols-2">
+          <div className="rounded-md border border-dashed border-border p-4">
+            <h3 className="text-sm font-semibold">IT Aggregate</h3>
+            <div className="mt-2 grid gap-2">
+              <label className="text-xs uppercase text-muted-foreground">Arbeitslos</label>
+              <input
+                type="number"
+                className="rounded-md border border-input bg-background px-3 py-2 text-sm"
+                value={monthlyEntry.itAggregate.unemployed ?? ''}
+                onChange={handleMonthlyNumbers('itAggregate', 'unemployed')}
+              />
+              <label className="text-xs uppercase text-muted-foreground">Suchend</label>
+              <input
+                type="number"
+                className="rounded-md border border-input bg-background px-3 py-2 text-sm"
+                value={monthlyEntry.itAggregate.seeking ?? ''}
+                onChange={handleMonthlyNumbers('itAggregate', 'seeking')}
+              />
+            </div>
+          </div>
+          <div className="rounded-md border border-dashed border-border p-4">
+            <h3 className="text-sm font-semibold">IT Jobs (gesamt)</h3>
+            <label className="text-xs uppercase text-muted-foreground">Neue IT Jobs</label>
+            <input
+              type="number"
+              className="rounded-md border border-input bg-background px-3 py-2 text-sm"
+              value={monthlyEntry.itJobs.it_jobs ?? ''}
+              onChange={handleMonthlyNumbers('itJobs', 'it_jobs')}
+            />
+          </div>
+          <div className="rounded-md border border-dashed border-border p-4">
+            <h3 className="text-sm font-semibold">Deutschland gesamt</h3>
+            {(['unemployed', 'seeking', 'jobs'] as const).map((field) => (
+              <div key={field} className="mt-2">
+                <label className="text-xs uppercase text-muted-foreground">
+                  {field === 'unemployed'
+                    ? 'Arbeitslose'
+                    : field === 'seeking'
+                    ? 'Suchend'
+                    : 'Jobs'}
+                </label>
+                <input
+                  type="number"
+                  className="rounded-md border border-input bg-background px-3 py-2 text-sm"
+                  value={monthlyEntry.germany[field] ?? ''}
+                  onChange={handleMonthlyNumbers('germany', field)}
+                />
+              </div>
+            ))}
+          </div>
+          <div className="rounded-md border border-dashed border-border p-4">
+            <h3 className="text-sm font-semibold">IT Infrastruktur</h3>
+            <label className="text-xs uppercase text-muted-foreground">Arbeitslos</label>
+            <input
+              type="number"
+              className="rounded-md border border-input bg-background px-3 py-2 text-sm"
+              value={monthlyEntry.infraAggregate.unemployed ?? ''}
+              onChange={handleMonthlyNumbers('infraAggregate', 'unemployed')}
+            />
+            <label className="text-xs uppercase text-muted-foreground mt-2">Suchend</label>
+            <input
+              type="number"
+              className="rounded-md border border-input bg-background px-3 py-2 text-sm"
+              value={monthlyEntry.infraAggregate.seeking ?? ''}
+              onChange={handleMonthlyNumbers('infraAggregate', 'seeking')}
+            />
+            <label className="text-xs uppercase text-muted-foreground mt-2">Neue Jobs</label>
+            <input
+              type="number"
+              className="rounded-md border border-input bg-background px-3 py-2 text-sm"
+              value={monthlyEntry.infraJobs.it_jobs ?? ''}
+              onChange={handleMonthlyNumbers('infraJobs', 'it_jobs')}
+            />
+          </div>
+          <div className="rounded-md border border-dashed border-border p-4">
+            <h3 className="text-sm font-semibold">Softwareentwicklung</h3>
+            <label className="text-xs uppercase text-muted-foreground">Arbeitslos</label>
+            <input
+              type="number"
+              className="rounded-md border border-input bg-background px-3 py-2 text-sm"
+              value={monthlyEntry.softwareAggregate.unemployed ?? ''}
+              onChange={handleMonthlyNumbers('softwareAggregate', 'unemployed')}
+            />
+            <label className="text-xs uppercase text-muted-foreground mt-2">Suchend</label>
+            <input
+              type="number"
+              className="rounded-md border border-input bg-background px-3 py-2 text-sm"
+              value={monthlyEntry.softwareAggregate.seeking ?? ''}
+              onChange={handleMonthlyNumbers('softwareAggregate', 'seeking')}
+            />
+            <label className="text-xs uppercase text-muted-foreground mt-2">Neue Jobs</label>
+            <input
+              type="number"
+              className="rounded-md border border-input bg-background px-3 py-2 text-sm"
+              value={monthlyEntry.softwareJobs.it_jobs ?? ''}
+              onChange={handleMonthlyNumbers('softwareJobs', 'it_jobs')}
+            />
+          </div>
+        </div>
+        <pre className="mt-4 max-h-[320px] overflow-auto rounded-md border border-border bg-background p-4 text-sm">
+          {monthlySnippet}
         </pre>
       </section>
     </main>
