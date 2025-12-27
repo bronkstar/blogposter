@@ -40,7 +40,9 @@ export const frontmatterSchema = z.object({
 
 export type Frontmatter = z.infer<typeof frontmatterSchema>;
 
-export const defaultFrontmatter: Frontmatter = {
+export type WriterMode = 'it-market' | 'blog';
+
+const itMarketDefault: Frontmatter = {
   title: 'IT-Arbeitsmarkt November 2025 - Wo bleibt der Herbst der Reformen?',
   description:
     'November 2025: 146.325 IT-Fachkräfte arbeitslos/arbeitssuchend, nur 11.668 neue IT-Jobs. Trend zeigt weiter nach unten',
@@ -90,7 +92,52 @@ export const defaultFrontmatter: Frontmatter = {
   ],
 };
 
-export const defaultBody = `## IT-Arbeitsmarkt November 2025 - Wo bleibt der Herbst der Reformen?
+const blogDefault: Frontmatter = {
+  title: 'Tech Recruiting Trends 2025 – Remote Onboarding richtig nutzen',
+  description:
+    'Remote Onboarding bleibt 2025 ein zentraler Erfolgsfaktor. Wir zeigen, wie Tech Recruiting Teams neue Kolleg:innen sicher und schnell integrieren.',
+  date: '2025-12-02T09:00:00+02:00',
+  draft: false,
+  image: '/Bilder/Startseite/Blog/tech-recruiting-trends-2025.webp',
+  imageAlt: 'Laptop mit Notizbuch – Symbolbild Remote Onboarding',
+  slug: '/tech-recruiting-trends-2025',
+  author: 'Björn-Richter',
+  categories: ['Blog'],
+  tags: ['Tech Recruiting', 'Remote Onboarding'],
+  jobSnippedTag: 'blog',
+  lesedauer: '4 Minuten',
+  zielgruppe: ['Für Arbeitgeber', 'HR-Teams'],
+  Keywords: [
+    'Remote Onboarding 2025',
+    'Tech Recruiting Trends',
+    'HR Digitalisierung',
+    'Onboarding Best Practices',
+    'IT Hiring 2025',
+  ],
+  summary:
+    'Remote Onboarding bestimmt auch 2025 das Tempo in Tech Recruiting. Wir erklären, wie HR-Teams Prozesse strukturieren, Mentoring etablieren und Tools sinnvoll kombinieren, damit neue IT-Fachkräfte schnell produktiv werden.',
+  faq: [
+    {
+      question: 'Warum lohnt sich Remote Onboarding?',
+      answer:
+        'Unternehmen bleiben flexibel, sparen Reisekosten und können Talente deutschlandweit einstellen. Gleichzeitig braucht es klare Abläufe und Feedbackschleifen, damit Teams nicht aus dem Takt geraten.',
+    },
+    {
+      question: 'Welche Tools helfen beim Einstieg?',
+      answer:
+        'Digitale Welcome-Guides, strukturierte Kick-off-Calls und ein fester Slack/Teams-Buddy-Kanal schaffen Verbindlichkeit. Wichtig ist, dass alle Materialien vor dem ersten Tag bereitstehen.',
+    },
+  ],
+};
+
+export const writerFrontmatterDefaults: Record<WriterMode, Frontmatter> = {
+  'it-market': itMarketDefault,
+  blog: blogDefault,
+};
+
+export const defaultFrontmatter = writerFrontmatterDefaults['it-market'];
+
+const itMarketBody = `## IT-Arbeitsmarkt November 2025 - Wo bleibt der Herbst der Reformen?
 
 Heute ist der 01.12.2025 - Jahresendspurt! Genau aus diesem Grund halte ich mich heute sehr kurz! Nächstes Jahr wieder etwas mehr Prosa von ;)
 
@@ -230,5 +277,30 @@ Kommen wir zu einem weiteren wichtigen Thema: wir suchen noch passende Talente:
 {{< space >}}
 
 Schaut gerne vorbei und meldet euch bei Fragen und Anregungen: br@dietechrecruiter.de`;
+
+const blogBody = `## Remote Onboarding bleibt
+
+Viele Tech-Teams haben 2024 ihre Remote-Prozesse verschlankt – 2025 entscheidet sich, ob daraus wirklich ein Vorteil entsteht. Entscheidend ist, dass Onboarding nicht nur Dokumente bereitstellt, sondern echte Ansprechpartner.
+
+{{< space >}}
+
+## Drei Schritte zu mehr Struktur
+
+1. **Kick-off-Call**: Ein fester Termin mit People & Team Lead in der ersten Woche.
+2. **Buddy-System**: Jemand, der Fragen schnell beantwortet – egal ob Tooling oder Kultur.
+3. **Messbare Ziele**: Kurze Lernziele für Woche 1, 2 und 4 geben Orientierung.
+
+{{< space >}}
+
+## Fazit
+
+Remote Onboarding kostet Zeit – aber weniger als schlechte Einstiege. Wer seine Abläufe dokumentiert und Feedback einholt, schafft Vertrauen und beschleunigt Recruiting.`;
+
+export const writerBodyDefaults: Record<WriterMode, string> = {
+  'it-market': itMarketBody,
+  blog: blogBody,
+};
+
+export const defaultBody = writerBodyDefaults['it-market'];
 
 export const validateFrontmatter = (value: unknown) => frontmatterSchema.safeParse(value);

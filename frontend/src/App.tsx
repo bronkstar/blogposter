@@ -1,24 +1,51 @@
 import type { ChangeEvent } from 'react';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import monthlyTomlSource from '../../docs/monthly.toml?raw';
 import { serializeFrontmatter } from './lib/parsers/frontmatter';
 import { parseMonthlyToml } from './lib/parsers/monthly';
 import {
-  defaultFrontmatter,
-  defaultBody,
   frontmatterSchema,
+  writerFrontmatterDefaults,
+  writerBodyDefaults,
+  type WriterMode,
   type FaqEntry,
   type Frontmatter,
 } from './lib/schemas/frontmatter';
 import type { Shortcode } from './lib/schemas/shortcodes';
 import { shortcodeSchema } from './lib/schemas/shortcodes';
 
-const FRONTMATTER_STORAGE_KEY = 'blogposter.frontmatter.v1';
-const SHORTCODES_STORAGE_KEY = 'blogposter.shortcodes.v1';
-const BODY_STORAGE_KEY = 'blogposter.body.v1';
-const MONTHLY_ENTRY_STORAGE_KEY = 'blogposter.monthly-entry.v1';
+const MODE_STORAGE_KEY = 'blogposter.writer-mode.v1';
+const STORAGE_KEYS: Record<
+  WriterMode,
+  { frontmatter: string; shortcodes: string; body: string }
+> = {
+  'it-market': {
+    frontmatter: 'blogposter.it-market.frontmatter.v1',
+    shortcodes: 'blogposter.it-market.shortcodes.v1',
+    body: 'blogposter.it-market.body.v1',
+  },
+  blog: {
+    frontmatter: 'blogposter.blog.frontmatter.v1',
+    shortcodes: 'blogposter.blog.shortcodes.v1',
+    body: 'blogposter.blog.body.v1',
+  },
+};
+const MONTHLY_ENTRY_STORAGE_KEY = 'blogposter.it-market.monthly-entry.v1';
 
 const monthlyDataset = parseMonthlyToml(monthlyTomlSource);
+
+const writerModeConfig: Record<WriterMode, { label: string; description: string }> = {
+  'it-market': {
+    label: 'IT-Arbeitsmarkt-Writer',
+    description:
+      'Optimiert für monatliche IT-Arbeitsmarktberichte inkl. Monatsdaten, Shortcodes und TOML-Export.',
+  },
+  blog: {
+    label: 'Blogpost-Writer',
+    description:
+      'Reduzierte Ansicht für thematische Blogartikel ohne Monatsdaten – Fokus auf Storytelling & Body.',
+  },
+};
 
 type MonthlyCategoryNumbers = {
   unemployed?: number;
@@ -62,21 +89,30 @@ const createDefaultShortcode = (type: Shortcode['type']): Shortcode => {
   };
 };
 
-const loadFrontmatterFromStorage = (): Frontmatter => {
-  if (typeof window === 'undefined') return defaultFrontmatter;
-  const raw = window.localStorage.getItem(FRONTMATTER_STORAGE_KEY);
-  if (!raw) return defaultFrontmatter;
+const cloneFrontmatterTemplate = (mode: WriterMode): Frontmatter =>
+  JSON.parse(JSON.stringify(writerFrontmatterDefaults[mode])) as Frontmatter;
+
+const loadModeFromStorage = (): WriterMode => {
+  if (typeof window === 'undefined') return 'it-market';
+  const raw = window.localStorage.getItem(MODE_STORAGE_KEY);
+  return raw === 'blog' ? 'blog' : 'it-market';
+};
+
+const loadFrontmatterFromStorage = (mode: WriterMode): Frontmatter => {
+  if (typeof window === 'undefined') return cloneFrontmatterTemplate(mode);
+  const raw = window.localStorage.getItem(STORAGE_KEYS[mode].frontmatter);
+  if (!raw) return cloneFrontmatterTemplate(mode);
   try {
     const parsed = JSON.parse(raw);
     return frontmatterSchema.parse(parsed);
   } catch {
-    return defaultFrontmatter;
+    return cloneFrontmatterTemplate(mode);
   }
 };
 
-const loadShortcodesFromStorage = (): Shortcode[] => {
+const loadShortcodesFromStorage = (mode: WriterMode): Shortcode[] => {
   if (typeof window === 'undefined') return [];
-  const raw = window.localStorage.getItem(SHORTCODES_STORAGE_KEY);
+  const raw = window.localStorage.getItem(STORAGE_KEYS[mode].shortcodes);
   if (!raw) return [];
   try {
     const parsed = JSON.parse(raw);
@@ -92,9 +128,9 @@ const loadShortcodesFromStorage = (): Shortcode[] => {
   }
 };
 
-const loadBodyFromStorage = (): string => {
-  if (typeof window === 'undefined') return defaultBody;
-  return window.localStorage.getItem(BODY_STORAGE_KEY) ?? defaultBody;
+const loadBodyFromStorage = (mode: WriterMode): string => {
+  if (typeof window === 'undefined') return writerBodyDefaults[mode];
+  return window.localStorage.getItem(STORAGE_KEYS[mode].body) ?? writerBodyDefaults[mode];
 };
 
 const deriveMonthlyDefaults = (): MonthlyEntry => {
@@ -241,31 +277,51 @@ const serializeMonthlyEntry = (entry: MonthlyEntry) => {
 };
 
 function App() {
-  const [frontmatter, setFrontmatter] = useState<Frontmatter>(defaultFrontmatter);
-  const [shortcodes, setShortcodes] = useState<Shortcode[]>(loadShortcodesFromStorage);
-  const [body, setBody] = useState<string>(defaultBody);
+  const initialModeRef = useRef<WriterMode | null>(null);
+  if (!initialModeRef.current) {
+    initialModeRef.current = loadModeFromStorage();
+  }
+  const initialMode = initialModeRef.current as WriterMode;
+
+  const [mode, setMode] = useState<WriterMode>(initialMode);
+  const [frontmatter, setFrontmatter] = useState<Frontmatter>(() =>
+    loadFrontmatterFromStorage(initialMode),
+  );
+  const [shortcodes, setShortcodes] = useState<Shortcode[]>(() =>
+    loadShortcodesFromStorage(initialMode),
+  );
+  const [body, setBody] = useState<string>(() => loadBodyFromStorage(initialMode));
   const [monthlyEntry, setMonthlyEntry] = useState<MonthlyEntry>(monthlyDefaultsPreset);
 
   useEffect(() => {
-    setFrontmatter(loadFrontmatterFromStorage());
-    setBody(loadBodyFromStorage());
+    setFrontmatter(loadFrontmatterFromStorage(mode));
+    setShortcodes(loadShortcodesFromStorage(mode));
+    setBody(loadBodyFromStorage(mode));
+  }, [mode]);
+
+  useEffect(() => {
     setMonthlyEntry(loadMonthlyEntryFromStorage());
   }, []);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
-    window.localStorage.setItem(FRONTMATTER_STORAGE_KEY, JSON.stringify(frontmatter));
-  }, [frontmatter]);
+    window.localStorage.setItem(MODE_STORAGE_KEY, mode);
+  }, [mode]);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
-    window.localStorage.setItem(SHORTCODES_STORAGE_KEY, JSON.stringify(shortcodes));
-  }, [shortcodes]);
+    window.localStorage.setItem(STORAGE_KEYS[mode].frontmatter, JSON.stringify(frontmatter));
+  }, [frontmatter, mode]);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
-    window.localStorage.setItem(BODY_STORAGE_KEY, body);
-  }, [body]);
+    window.localStorage.setItem(STORAGE_KEYS[mode].shortcodes, JSON.stringify(shortcodes));
+  }, [shortcodes, mode]);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    window.localStorage.setItem(STORAGE_KEYS[mode].body, body);
+  }, [body, mode]);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -408,6 +464,9 @@ function App() {
     [monthlyEntry],
   );
 
+  const currentFrontmatterTemplate = writerFrontmatterDefaults[mode];
+  const currentBodyTemplate = writerBodyDefaults[mode];
+
   const FieldBadge = ({ isDefault }: { isDefault: boolean }) => (
     <span className={`text-xs font-semibold ${isDefault ? 'text-muted-foreground' : 'text-emerald-600'}`}>
       {isDefault ? 'Standard' : 'Neu'}
@@ -422,7 +481,7 @@ function App() {
   );
 
   const isFrontmatterFieldDefault = (field: keyof Frontmatter) => {
-    const initial = defaultFrontmatter[field];
+    const initial = currentFrontmatterTemplate[field];
     const current = frontmatter[field];
     if (Array.isArray(initial) && Array.isArray(current)) {
       return JSON.stringify(initial) === JSON.stringify(current);
@@ -434,12 +493,12 @@ function App() {
   };
 
   const isFrontmatterOverallDefault = useMemo(
-    () => JSON.stringify(frontmatter) === JSON.stringify(defaultFrontmatter),
-    [frontmatter],
+    () => JSON.stringify(frontmatter) === JSON.stringify(currentFrontmatterTemplate),
+    [frontmatter, currentFrontmatterTemplate],
   );
   const isBodyDefault = useMemo(
-    () => body.trim() === defaultBody.trim(),
-    [body],
+    () => body.trim() === currentBodyTemplate.trim(),
+    [body, currentBodyTemplate],
   );
   const areShortcodesDefault = useMemo(
     () => shortcodes.length === 0,
@@ -471,10 +530,42 @@ function App() {
 
   return (
     <main className="mx-auto max-w-6xl space-y-10 px-4 py-10">
+      <section className="rounded-lg border border-border bg-card p-6 shadow-sm">
+        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+          <div className="space-y-1">
+            <p className="text-sm uppercase tracking-wider text-muted-foreground">Writer auswählen</p>
+            <h2 className="text-2xl font-semibold text-foreground">Was möchtest du schreiben?</h2>
+            <p className="text-sm text-muted-foreground">{writerModeConfig[mode].description}</p>
+          </div>
+          <div className="flex flex-wrap gap-3">
+            {(Object.keys(writerModeConfig) as WriterMode[]).map((option) => {
+              const isActive = option === mode;
+              return (
+                <button
+                  key={option}
+                  type="button"
+                  onClick={() => setMode(option)}
+                  aria-pressed={isActive}
+                  className={`rounded-md border px-4 py-2 text-sm font-medium transition ${
+                    isActive
+                      ? 'border-primary bg-primary text-primary-foreground shadow'
+                      : 'border-input bg-background text-foreground hover:border-primary/60'
+                  }`}
+                >
+                  {writerModeConfig[option].label}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
       <header className="space-y-4">
         <div>
           <p className="text-sm uppercase tracking-wider text-muted-foreground">Sprint 01</p>
-          <h1 className="text-3xl font-semibold text-foreground">Blogposter – Formulareingabe</h1>
+          <h1 className="text-3xl font-semibold text-foreground">
+            Blogposter – Formulareingabe ({writerModeConfig[mode].label})
+          </h1>
           <p className="text-base text-muted-foreground">
             Metadaten, Body-Text, FAQ und Shortcodes auf einen Blick. Alles wird geprüft und lokal gespeichert.
           </p>
@@ -489,9 +580,11 @@ function App() {
           <li className={areShortcodesDefault ? 'text-muted-foreground' : 'text-emerald-700'}>
             {areShortcodesDefault ? '⚠️ Shortcodes noch Beispiel' : '✅ Shortcodes angepasst'}
           </li>
-          <li className={areMonthlyDefault ? 'text-muted-foreground' : 'text-emerald-700'}>
-            {areMonthlyDefault ? '⚠️ Monatsdaten noch Beispiel' : '✅ Monatsdaten angepasst'}
-          </li>
+          {mode === 'it-market' && (
+            <li className={areMonthlyDefault ? 'text-muted-foreground' : 'text-emerald-700'}>
+              {areMonthlyDefault ? '⚠️ Monatsdaten noch Beispiel' : '✅ Monatsdaten angepasst'}
+            </li>
+          )}
         </ul>
       </header>
 
@@ -899,35 +992,37 @@ function App() {
         </div>
       </section>
 
-      <section className="rounded-lg border border-border bg-card p-6 shadow-sm">
-        <h2 className="text-xl font-semibold">Monthly TOML Vorschau</h2>
-        <p className="text-sm text-muted-foreground">Nur Lesen – Daten stammen aus docs/monthly.toml.</p>
-        <div className="mt-4 grid gap-4 md:grid-cols-2">
-          <div className="rounded-md border border-border bg-background p-4">
-            <p className="text-sm font-semibold">Letzter IT-Aggregat Monat</p>
-            {latestAggregate ? (
-              <ul className="mt-2 text-sm text-muted-foreground">
-                <li>Monat: {latestAggregate.label}</li>
-                <li>Arbeitslos: {latestAggregate.unemployed.toLocaleString('de-DE')}</li>
-                <li>Suchend: {latestAggregate.seeking.toLocaleString('de-DE')}</li>
-              </ul>
-            ) : (
-              <p className="text-sm text-muted-foreground">Keine Daten</p>
-            )}
+      {mode === 'it-market' && (
+        <section className="rounded-lg border border-border bg-card p-6 shadow-sm">
+          <h2 className="text-xl font-semibold">Monthly TOML Vorschau</h2>
+          <p className="text-sm text-muted-foreground">Nur Lesen – Daten stammen aus docs/monthly.toml.</p>
+          <div className="mt-4 grid gap-4 md:grid-cols-2">
+            <div className="rounded-md border border-border bg-background p-4">
+              <p className="text-sm font-semibold">Letzter IT-Aggregat Monat</p>
+              {latestAggregate ? (
+                <ul className="mt-2 text-sm text-muted-foreground">
+                  <li>Monat: {latestAggregate.label}</li>
+                  <li>Arbeitslos: {latestAggregate.unemployed.toLocaleString('de-DE')}</li>
+                  <li>Suchend: {latestAggregate.seeking.toLocaleString('de-DE')}</li>
+                </ul>
+              ) : (
+                <p className="text-sm text-muted-foreground">Keine Daten</p>
+              )}
+            </div>
+            <div className="rounded-md border border-border bg-background p-4">
+              <p className="text-sm font-semibold">Letzte IT-Jobs</p>
+              {latestJobs ? (
+                <ul className="mt-2 text-sm text-muted-foreground">
+                  <li>Monat: {latestJobs.label}</li>
+                  <li>Neue IT-Jobs: {latestJobs.it_jobs.toLocaleString('de-DE')}</li>
+                </ul>
+              ) : (
+                <p className="text-sm text-muted-foreground">Keine Daten</p>
+              )}
+            </div>
           </div>
-          <div className="rounded-md border border-border bg-background p-4">
-            <p className="text-sm font-semibold">Letzte IT-Jobs</p>
-            {latestJobs ? (
-              <ul className="mt-2 text-sm text-muted-foreground">
-                <li>Monat: {latestJobs.label}</li>
-                <li>Neue IT-Jobs: {latestJobs.it_jobs.toLocaleString('de-DE')}</li>
-              </ul>
-            ) : (
-              <p className="text-sm text-muted-foreground">Keine Daten</p>
-            )}
-          </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       <section className="rounded-lg border border-border bg-card p-6 shadow-sm">
         <div className="flex flex-wrap items-center justify-between gap-4">
@@ -952,7 +1047,8 @@ function App() {
         </pre>
       </section>
 
-      <section className="rounded-lg border border-border bg-card p-6 shadow-sm">
+      {mode === 'it-market' && (
+        <section className="rounded-lg border border-border bg-card p-6 shadow-sm">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
             <h2 className="text-xl font-semibold">Monatsdaten (TOML)</h2>
@@ -1092,7 +1188,8 @@ function App() {
         <pre className="mt-4 max-h-[320px] overflow-auto rounded-md border border-border bg-background p-4 text-sm">
           {monthlySnippet}
         </pre>
-      </section>
+        </section>
+      )}
     </main>
   );
 }

@@ -17,6 +17,7 @@
    npm --prefix frontend run dev
    ```
    Browser: `http://localhost:5173`.
+   - Oben links wählst du den Writer: Standard = „IT-Arbeitsmarkt-Writer“, alternativ „Blogpost-Writer“ für thematische Artikel.
 4. **Sprint-Konzept prüfen**
    - Datei `docs/konzepte_fuer_architekturen/20251222-blogposter-sprint-01.md` lesen.
    - Offene Fragen + nächste Phase checken.
@@ -60,6 +61,11 @@
 
 Blogposter ist eine kleine Web-App, mit der strukturierte IT-Arbeitsmarktberichte (Frontmatter + Markdown inkl. FAQ und Shortcodes) erstellt werden sollen. Phase 1 liefert das technische Fundament: React + Vite + TypeScript, Tailwind CSS und shadcn/ui sind eingerichtet, aber die eigentliche Eingabemaske folgt in späteren Phasen.
 
+## Writer-Modi in der App
+
+- **IT-Arbeitsmarkt-Writer (Standard)**: Enthält Monatsdaten-Formular, TOML-Vorschau, Shortcodes für Tabellen/Charts und alle Pflichtfelder des Beispieldokuments `docs/0057-…`. Jede Sektion zeigt an, ob noch Standardwerte aktiv sind („Standard“) oder schon angepasst („Neu“).
+- **Blogpost-Writer**: Reduzierte Oberfläche für thematische Beiträge ohne Monatsdaten. Fokus auf Metadaten, Body, FAQ und optionale Shortcodes. Beide Writer speichern ihre Eingaben getrennt im Browser.
+
 ## Daten & Dateien
 
 - `docs/0057-it-arbeitsmarkt-november-2025.md`: Beispielartikel, den wir nachbauen.
@@ -84,7 +90,7 @@ Blogposter ist eine kleine Web-App, mit der strukturierte IT-Arbeitsmarktbericht
 ## Tests & Qualitätssicherung
 
 - **Unit-Tests (Vitest)** decken Parser & Serializer ab (`frontmatter` und `monthly`), sodass Export/Import nicht unbemerkt kaputtgeht. Kommando: `npm --prefix frontend run test`.
-- **Playwright-Smoke-Test** startet den Dev-Server automatisch, öffnet die App und kontrolliert, ob Standarddaten + UI sichtbar sind. Kommando: `npm --prefix frontend run test:e2e` (vorher einmal `npx --prefix frontend playwright install` ausführen).
+- **Playwright-Smoke-Test** startet den Dev-Server automatisch, prüft beide Writer-Modi (IT-Arbeitsmarkt & Blogpost) und kontrolliert, ob Standarddaten sichtbar sind. Kommando: `npm --prefix frontend run test:e2e` (vorher einmal `npx --prefix frontend playwright install` ausführen).
 - **Empfehlung vor jedem Commit**: `npm --prefix frontend run test && npm --prefix frontend run build`. Im CI können dieselben Befehle genutzt werden.
 
 ## Häufige Fragen (Stand jetzt)
