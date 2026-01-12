@@ -103,10 +103,8 @@ document.addEventListener('DOMContentLoaded', () => {
         svg.appendChild(t);
       }
       svg.appendChild(grid);
-      // X labels (thin out to avoid overlap)
-      const step = Math.max(1, Math.ceil(arr.length / 8));
+      // X labels
       arr.forEach((d, i) => {
-        if (i % step !== 0 && i !== arr.length - 1) return;
         const x = margin.left + (i * width / (arr.length - 1));
         const t = document.createElementNS('http://www.w3.org/2000/svg', 'text');
         t.setAttribute('x', x);

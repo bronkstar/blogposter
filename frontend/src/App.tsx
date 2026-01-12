@@ -520,7 +520,7 @@ const buildChartEmbed = (
   );
   const cid = `preview-${_index}`;
   return `
-    <div class="itmarket-chart preview-chart" data-cid="${cid}" data-width="${width}" data-height="${height}" data-range="all" data-animation="disabled" data-type="all" data-json="${dataJson}">
+    <div class="itmarket-chart preview-chart" data-cid="${cid}" data-width="${width}" data-height="${height}" data-range="all" data-animation="enabled" data-type="all" data-json="${dataJson}">
       <svg id="modernChart-${cid}" viewBox="0 0 ${width} ${height}" role="img" class="w-full drop-shadow-lg"></svg>
       <div class="tooltip" id="tooltip-${cid}"></div>
       <div class="legend" id="legend-${cid}"></div>
