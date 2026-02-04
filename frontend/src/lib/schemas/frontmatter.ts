@@ -23,6 +23,13 @@ export const frontmatterSchema = z.object({
   date: z
     .string()
     .regex(isoDateRegex, 'Datum muss ISO-8601 entsprechen, z. B. 2025-12-02T09:00:00+02:00'),
+  dateModified: z
+    .string()
+    .refine(
+      (value) => value.length === 0 || isoDateRegex.test(value),
+      'dateModified muss ISO-8601 entsprechen, z. B. 2025-12-02T09:00:00+02:00',
+    )
+    .default(''),
   draft: z.boolean(),
   image: z.string().min(1, 'Bildpfad ist erforderlich.'),
   imageAlt: z.string().min(3, 'Alt-Text benötigt mindestens drei Zeichen.'),
@@ -47,6 +54,7 @@ const itMarketDefault: Frontmatter = {
   description:
     'November 2025: 146.325 IT-Fachkräfte arbeitslos/arbeitssuchend, nur 11.668 neue IT-Jobs. Trend zeigt weiter nach unten',
   date: '2025-12-02T09:00:00+02:00',
+  dateModified: '',
   draft: false,
   image: '/Bilder/Startseite/Blog/it-arbeitsmarkt-thumbnail-november-2025.webp',
   imageAlt: 'Schriftzug IT Arbeitsmarkt November 2025. Firma Die Tech Recruiter GmbH',
@@ -97,6 +105,7 @@ const blogDefault: Frontmatter = {
   description:
     'Remote Onboarding bleibt 2025 ein zentraler Erfolgsfaktor. Wir zeigen, wie Tech Recruiting Teams neue Kolleg:innen sicher und schnell integrieren.',
   date: '2025-12-02T09:00:00+02:00',
+  dateModified: '',
   draft: false,
   image: '/Bilder/Startseite/Blog/tech-recruiting-trends-2025.webp',
   imageAlt: 'Laptop mit Notizbuch – Symbolbild Remote Onboarding',

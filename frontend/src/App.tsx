@@ -3,6 +3,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import DOMPurify from 'dompurify';
 import { marked } from 'marked';
 import monthlyTomlSource from '../../docs/monthly.toml?raw';
+import { normalizeBody } from './lib/parsers/body';
 import { serializeFrontmatter } from './lib/parsers/frontmatter';
 import { parseMonthlyToml, serializeMonthlyDataset } from './lib/parsers/monthly';
 import {
@@ -36,7 +37,14 @@ const STORAGE_KEYS: Record<
 };
 const MONTHLY_ENTRY_STORAGE_KEY = 'blogposter.it-market.monthly-entry.v1';
 
+const getLatestMonth = (dataset: MonthlyDataset) => {
+  const months = dataset.it_aggregate?.map((entry) => entry.month) ?? [];
+  if (months.length === 0) return '2024-04';
+  return [...months].sort().slice(-1)[0];
+};
+
 const monthlyDataset = parseMonthlyToml(monthlyTomlSource);
+const latestMonth = getLatestMonth(monthlyDataset);
 
 const writerModeConfig: Record<WriterMode, { label: string; description: string }> = {
   'it-market': {
@@ -51,13 +59,7 @@ const writerModeConfig: Record<WriterMode, { label: string; description: string 
   },
 };
 
-const DISCOVER_OPTIONS = {
-  publisherNames: ['Die Tech Recruiter GmbH'],
-  publisherUrls: ['https://dietechrecruiter.de'],
-  publisherLogoUrls: ['https://dietechrecruiter.de/Bilder/Logos/dtr2.png'],
-  canonicalBaseUrls: ['https://dietechrecruiter.de'],
-  languages: ['de-DE'],
-};
+const DEFAULT_BASE_URL = 'https://dietechrecruiter.de';
 
 type MonthlyCategoryNumbers = {
   unemployed?: number;
@@ -94,7 +96,7 @@ const createDefaultShortcode = (type: Shortcode['type']): Shortcode => {
     return {
       type,
       from: '2024-04',
-      to: '2025-11',
+      to: latestMonth,
       width: 960,
       height: 540,
       title: 'Entwicklung IT Arbeitsmarkt Deutschland',
@@ -105,7 +107,7 @@ const createDefaultShortcode = (type: Shortcode['type']): Shortcode => {
     mode: 'range',
     tableType: 'it_aggregate',
     from: '2024-04',
-    to: '2025-11',
+    to: latestMonth,
   };
 };
 
@@ -244,16 +246,6 @@ const inputToList = (value: string) =>
     .split(',')
     .map((item) => item.trim())
     .filter(Boolean);
-
-const deriveTimeRequired = (lesedauer: string) => {
-  const normalized = lesedauer.toLowerCase();
-  const match = normalized.match(/(\d+)/);
-  if (!match) return '';
-  const value = Number(match[1]);
-  if (!Number.isFinite(value) || value <= 0) return '';
-  if (normalized.includes('stunde')) return `PT${value}H`;
-  return `PT${value}M`;
-};
 
 const formatPreviewDate = (isoDate: string) => {
   if (!isoDate) return '';
@@ -691,12 +683,10 @@ const buildPreviewHtml = (
   monthlyEntry: MonthlyEntry,
   prevGermanyEntry: PrevGermanyEntry,
 ) => {
-  const baseUrl = frontmatter.canonicalBaseUrl || 'https://dietechrecruiter.de';
+  const baseUrl = DEFAULT_BASE_URL;
   const heroImage = toAbsoluteUrl(frontmatter.image, baseUrl);
   const authorName = formatAuthorName(frontmatter.author);
-  const authorPhoto = frontmatter.authorUrl.includes('bj%C3%B6rn-richter')
-    ? toAbsoluteUrl('/Bilder/DTR/br.webp', baseUrl)
-    : '';
+  const authorPhoto = '';
   const updatedDataset = buildUpdatedMonthlyDataset(monthlyDataset, monthlyEntry, prevGermanyEntry);
   const tablePanelExtraction = extractTablePanelBlocks(body);
   const rawHtml = marked.parse(tablePanelExtraction.markdown, { async: false });
@@ -1116,14 +1106,6 @@ function App() {
   }, [frontmatter.date]);
 
   useEffect(() => {
-    const derived = deriveTimeRequired(frontmatter.lesedauer);
-    setFrontmatter((prev) => {
-      if (prev.timeRequired === derived) return prev;
-      return { ...prev, timeRequired: derived };
-    });
-  }, [frontmatter.lesedauer]);
-
-  useEffect(() => {
     const nextDefaults = derivePrevGermanyDefaults(monthlyEntry.month, monthlyEntry.label);
     setPrevGermanyEntry((prev) => {
       if (prev.month && prev.month !== lastAutoPrevGermanyRef.current) return prev;
@@ -1216,22 +1198,19 @@ function App() {
   const shortcodesValidation = shortcodes.map((entry) => shortcodeSchema.safeParse(entry));
   const hasValidShortcodes = shortcodesValidation.every((entry) => entry.success);
   const serializedFrontmatter = useMemo(() => serializeFrontmatter(frontmatter), [frontmatter]);
+  const normalizedBody = useMemo(
+    () => normalizeBody(body, { month: monthlyEntry.month || latestMonth }),
+    [body, monthlyEntry.month],
+  );
   const markdownPreview = useMemo(
-    () => `${serializedFrontmatter}\n\n${body}`.trim(),
-    [serializedFrontmatter, body],
+    () => `${serializedFrontmatter}\n\n${normalizedBody}`.trim(),
+    [serializedFrontmatter, normalizedBody],
   );
   const previewHtml = useMemo(
-    () => buildPreviewHtml(frontmatter, body, monthlyEntry, prevGermanyEntry),
-    [frontmatter, body, monthlyEntry, prevGermanyEntry],
+    () => buildPreviewHtml(frontmatter, normalizedBody, monthlyEntry, prevGermanyEntry),
+    [frontmatter, normalizedBody, monthlyEntry, prevGermanyEntry],
   );
   const canExport = frontmatterValidation.success && hasValidShortcodes;
-  const mainEntityOfPage = useMemo(() => {
-    const base = frontmatter.canonicalBaseUrl.trim();
-    if (!base || !frontmatter.slug) return '';
-    const cleanedBase = base.endsWith('/') ? base.slice(0, -1) : base;
-    const cleanedSlug = frontmatter.slug.startsWith('/') ? frontmatter.slug : `/${frontmatter.slug}`;
-    return `${cleanedBase}${cleanedSlug}`;
-  }, [frontmatter.canonicalBaseUrl, frontmatter.slug]);
   const chartShortcodes = useMemo(() => {
     const to = monthlyEntry.month;
     return {
@@ -1241,113 +1220,9 @@ function App() {
     };
   }, [monthlyEntry.month]);
   const comparisonTableSnippet = useMemo(() => {
-    const updatedDataset = buildUpdatedMonthlyDataset(monthlyDataset, monthlyEntry, prevGermanyEntry);
-    const currentMonth = monthlyEntry.month;
-    const previousMonth = getPrevYearMonth(currentMonth);
-    if (!currentMonth || !previousMonth) return '';
-
-    const currentLabel = formatMonthLabel(currentMonth);
-    const previousLabel = formatMonthLabel(previousMonth);
-    const currentKey = monthKey(currentMonth);
-    const previousKey = monthKey(previousMonth);
-    if (!currentKey || !previousKey) return '';
-
-    const prevItAggregate = updatedDataset.it_aggregate.find((entry) => entry.month === previousMonth);
-    const prevItJobs = updatedDataset.it_jobs.find((entry) => entry.month === previousMonth);
-    const prevGermany = updatedDataset.germany.find((entry) => entry.month === previousMonth);
-
-    const rows = [
-      {
-        index: 1,
-        status: 'Deutschland Arbeitslos',
-        current: monthlyEntry.germany.unemployed ?? 0,
-        previous: prevGermany?.unemployed ?? 0,
-      },
-      {
-        index: 2,
-        status: 'Deutschland Arbeitssuchend',
-        current: monthlyEntry.germany.seeking ?? 0,
-        previous: prevGermany?.seeking ?? 0,
-      },
-      {
-        index: 3,
-        status: 'Deutschland Jobs',
-        current: monthlyEntry.germany.jobs ?? 0,
-        previous: prevGermany?.jobs ?? 0,
-      },
-      {
-        index: 4,
-        status: 'IT Arbeitssuchend',
-        current: monthlyEntry.itAggregate.seeking ?? 0,
-        previous: prevItAggregate?.seeking ?? 0,
-      },
-      {
-        index: 5,
-        status: 'IT Arbeitslos',
-        current: monthlyEntry.itAggregate.unemployed ?? 0,
-        previous: prevItAggregate?.unemployed ?? 0,
-      },
-      {
-        index: 6,
-        status: 'IT Jobs',
-        current: monthlyEntry.itJobs.it_jobs ?? 0,
-        previous: prevItJobs?.it_jobs ?? 0,
-      },
-    ];
-
-    const rowLines = rows
-      .map((row) => {
-        const abs = row.current - row.previous;
-        const pct = row.previous === 0 ? 0 : Number(((abs / row.previous) * 100).toFixed(2));
-        return [
-          '[[table.rows]]',
-          `index = ${row.index}`,
-          `status = "${row.status}"`,
-          `v_${currentKey} = ${row.current}`,
-          `v_${previousKey} = ${row.previous}`,
-          `abs = ${abs}`,
-          `pct = ${pct}`,
-          '',
-        ].join('\n');
-      })
-      .join('\n');
-
-    return [
-      '[chart]',
-      'type = "table_panel"',
-      `title = "IT Arbeitsmarkt vs. Deutschland Arbeitsmarkt gesamt - ${monthlyEntry.label}"`,
-      'subtitle = ""',
-      'footer = "Daten der Agentur für Arbeit - Berechnung und Darstellung durch Die Tech Recruiter GmbH"',
-      '',
-      '[theme]',
-      'mode = "dark"',
-      'panel_background = "#111318"',
-      'table_header_background = "#1A1D24"',
-      'table_row_background = "#111318"',
-      'gridline_color = "#2A2F3A"',
-      'text_color = "#E8EAF0"',
-      'muted_text_color = "#AAB0BF"',
-      '',
-      '[layout]',
-      'title_align = "center"',
-      'footer_align = "center"',
-      'padding_px = 24',
-      'border_radius_px = 10',
-      '',
-      '[table]',
-      `columns = ["Status", "${currentLabel}", "${previousLabel}", "Absolut", "%"]`,
-      'align = ["left", "right", "right", "right", "right"]',
-      '',
-      '[format]',
-      'thousands_separator = "."',
-      'decimal_separator = ","',
-      'percent_decimals = 2',
-      'show_percent_sign = true',
-      'negative_sign = "-"',
-      '',
-      rowLines.trim(),
-    ].join('\n');
-  }, [monthlyEntry, prevGermanyEntry]);
+    if (!monthlyEntry.month) return '';
+    return `{{< itmarket_table type="compare" month="${monthlyEntry.month}" >}}`;
+  }, [monthlyEntry.month]);
 
   const handleFrontmatterChange =
     (field: keyof Frontmatter) =>
@@ -1362,7 +1237,7 @@ function App() {
     };
 
   const handleArrayFieldChange =
-    (field: 'categories' | 'tags' | 'zielgruppe' | 'Keywords' | 'authorSameAs') =>
+    (field: 'categories' | 'tags' | 'zielgruppe' | 'Keywords') =>
       (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         setFrontmatter((prev) => ({
           ...prev,
@@ -1746,15 +1621,15 @@ function App() {
 
         <div className="mt-6 border-t border-border pt-6">
           <div>
-            <h3 className="text-lg font-semibold">Google Discover (Schema.org)</h3>
+            <h3 className="text-lg font-semibold">Weitere Metadaten</h3>
             <p className="text-sm text-muted-foreground">
-              Diese Felder helfen, die Artikel automatisch als Article/BlogPosting zu kennzeichnen.
+              Optionales Änderungsdatum für Artikel-Updates.
             </p>
           </div>
 
           <div className="mt-4 grid gap-4 md:grid-cols-2">
             <div className="flex flex-col gap-1">
-              {renderLabel('dateModified (Google Discover)', isFrontmatterFieldDefault('dateModified'))}
+              {renderLabel('dateModified', isFrontmatterFieldDefault('dateModified'))}
               <input
                 className="rounded-md border border-input bg-background px-3 py-2 text-sm"
                 value={frontmatter.dateModified}
@@ -1762,183 +1637,6 @@ function App() {
                 placeholder="2025-12-02T12:30:00+01:00"
               />
               {frontmatterFieldErrors.dateModified && <p className="text-sm text-destructive">{frontmatterFieldErrors.dateModified[0]}</p>}
-            </div>
-            <div className="flex flex-col gap-1">
-              {renderLabel('timeRequired (Google Discover)', isFrontmatterFieldDefault('timeRequired'))}
-              <input
-                className="rounded-md border border-input bg-background px-3 py-2 text-sm"
-                value={frontmatter.timeRequired}
-                onChange={handleFrontmatterChange('timeRequired')}
-                placeholder="PT6M"
-              />
-              {frontmatterFieldErrors.timeRequired && <p className="text-sm text-destructive">{frontmatterFieldErrors.timeRequired[0]}</p>}
-            </div>
-          </div>
-
-          <div className="mt-4 grid gap-4 md:grid-cols-2">
-            <div className="flex flex-col gap-1">
-              {renderLabel('inLanguage (Google Discover)', isFrontmatterFieldDefault('inLanguage'))}
-              <select
-                className="rounded-md border border-input bg-background px-3 py-2 text-sm"
-                value={frontmatter.inLanguage}
-                onChange={handleFrontmatterChange('inLanguage')}
-              >
-                <option value="">Bitte wählen</option>
-                {DISCOVER_OPTIONS.languages.map((option) => (
-                  <option key={option} value={option}>
-                    {option}
-                  </option>
-                ))}
-              </select>
-              {frontmatterFieldErrors.inLanguage && <p className="text-sm text-destructive">{frontmatterFieldErrors.inLanguage[0]}</p>}
-            </div>
-            <div className="flex flex-col gap-1">
-              {renderLabel('Canonical Base URL (Google Discover)', isFrontmatterFieldDefault('canonicalBaseUrl'))}
-              <select
-                className="rounded-md border border-input bg-background px-3 py-2 text-sm"
-                value={frontmatter.canonicalBaseUrl}
-                onChange={handleFrontmatterChange('canonicalBaseUrl')}
-              >
-                <option value="">Bitte wählen</option>
-                {DISCOVER_OPTIONS.canonicalBaseUrls.map((option) => (
-                  <option key={option} value={option}>
-                    {option}
-                  </option>
-                ))}
-              </select>
-              {frontmatterFieldErrors.canonicalBaseUrl && <p className="text-sm text-destructive">{frontmatterFieldErrors.canonicalBaseUrl[0]}</p>}
-            </div>
-          </div>
-
-          <div className="mt-4 grid gap-4">
-            <div className="flex flex-col gap-1">
-              <label className="text-sm font-medium">mainEntityOfPage (aus Canonical + Slug)</label>
-              <input className="rounded-md border border-dashed bg-muted px-3 py-2 text-sm" value={mainEntityOfPage} disabled />
-            </div>
-          </div>
-
-          <div className="mt-4 grid gap-4 md:grid-cols-2">
-            <div className="flex flex-col gap-1">
-              {renderLabel('Author URL (Google Discover)', isFrontmatterFieldDefault('authorUrl'))}
-              <input
-                className="rounded-md border border-input bg-background px-3 py-2 text-sm"
-                value={frontmatter.authorUrl}
-                onChange={handleFrontmatterChange('authorUrl')}
-                placeholder="https://dietechrecruiter.de/autor/..."
-              />
-              {frontmatterFieldErrors.authorUrl && <p className="text-sm text-destructive">{frontmatterFieldErrors.authorUrl[0]}</p>}
-            </div>
-            <div className="flex flex-col gap-1">
-              {renderLabel('Author Job Title (Google Discover)', isFrontmatterFieldDefault('authorJobTitle'))}
-              <input
-                className="rounded-md border border-input bg-background px-3 py-2 text-sm"
-                value={frontmatter.authorJobTitle}
-                onChange={handleFrontmatterChange('authorJobTitle')}
-                placeholder="Geschäftsführer & IT-Personalberater"
-              />
-              {frontmatterFieldErrors.authorJobTitle && <p className="text-sm text-destructive">{frontmatterFieldErrors.authorJobTitle[0]}</p>}
-            </div>
-          </div>
-
-          <div className="mt-4 grid gap-4 md:grid-cols-2">
-            <div className="flex flex-col gap-1">
-              {renderLabel('Author WorksFor (Google Discover)', isFrontmatterFieldDefault('authorWorksFor'))}
-              <input
-                className="rounded-md border border-input bg-background px-3 py-2 text-sm"
-                value={frontmatter.authorWorksFor}
-                onChange={handleFrontmatterChange('authorWorksFor')}
-                placeholder="Die Tech Recruiter GmbH"
-              />
-              {frontmatterFieldErrors.authorWorksFor && <p className="text-sm text-destructive">{frontmatterFieldErrors.authorWorksFor[0]}</p>}
-            </div>
-            <div className="flex flex-col gap-1">
-              {renderLabel('Author SameAs (Google Discover, kommagetrennt)', isFrontmatterFieldDefault('authorSameAs'))}
-              <input
-                className="rounded-md border border-input bg-background px-3 py-2 text-sm"
-                value={listToInput(frontmatter.authorSameAs)}
-                onChange={handleArrayFieldChange('authorSameAs')}
-                placeholder="https://www.linkedin.com/in/..."
-              />
-              {frontmatterFieldErrors.authorSameAs && <p className="text-sm text-destructive">{frontmatterFieldErrors.authorSameAs[0]}</p>}
-            </div>
-          </div>
-
-          <div className="mt-4 grid gap-4 md:grid-cols-2">
-            <div className="flex flex-col gap-1">
-              {renderLabel('Publisher Name (Google Discover)', isFrontmatterFieldDefault('publisherName'))}
-              <select
-                className="rounded-md border border-input bg-background px-3 py-2 text-sm"
-                value={frontmatter.publisherName}
-                onChange={handleFrontmatterChange('publisherName')}
-              >
-                <option value="">Bitte wählen</option>
-                {DISCOVER_OPTIONS.publisherNames.map((option) => (
-                  <option key={option} value={option}>
-                    {option}
-                  </option>
-                ))}
-              </select>
-              {frontmatterFieldErrors.publisherName && <p className="text-sm text-destructive">{frontmatterFieldErrors.publisherName[0]}</p>}
-            </div>
-            <div className="flex flex-col gap-1">
-              {renderLabel('Publisher URL (Google Discover)', isFrontmatterFieldDefault('publisherUrl'))}
-              <select
-                className="rounded-md border border-input bg-background px-3 py-2 text-sm"
-                value={frontmatter.publisherUrl}
-                onChange={handleFrontmatterChange('publisherUrl')}
-              >
-                <option value="">Bitte wählen</option>
-                {DISCOVER_OPTIONS.publisherUrls.map((option) => (
-                  <option key={option} value={option}>
-                    {option}
-                  </option>
-                ))}
-              </select>
-              {frontmatterFieldErrors.publisherUrl && <p className="text-sm text-destructive">{frontmatterFieldErrors.publisherUrl[0]}</p>}
-            </div>
-          </div>
-
-          <div className="mt-4 grid gap-4 md:grid-cols-2">
-            <div className="flex flex-col gap-1">
-              {renderLabel('Publisher Logo URL (Google Discover)', isFrontmatterFieldDefault('publisherLogoUrl'))}
-              <select
-                className="rounded-md border border-input bg-background px-3 py-2 text-sm"
-                value={frontmatter.publisherLogoUrl}
-                onChange={handleFrontmatterChange('publisherLogoUrl')}
-              >
-                <option value="">Bitte wählen</option>
-                {DISCOVER_OPTIONS.publisherLogoUrls.map((option) => (
-                  <option key={option} value={option}>
-                    {option}
-                  </option>
-                ))}
-              </select>
-              {frontmatterFieldErrors.publisherLogoUrl && <p className="text-sm text-destructive">{frontmatterFieldErrors.publisherLogoUrl[0]}</p>}
-            </div>
-            <div className="flex flex-col gap-1">
-              {renderLabel('Publisher Logo Breite (Google Discover)', isFrontmatterFieldDefault('publisherLogoWidth'))}
-              <input
-                className="rounded-md border border-input bg-background px-3 py-2 text-sm"
-                inputMode="numeric"
-                value={frontmatter.publisherLogoWidth}
-                onChange={handleFrontmatterChange('publisherLogoWidth')}
-                placeholder="512"
-              />
-              {frontmatterFieldErrors.publisherLogoWidth && <p className="text-sm text-destructive">{frontmatterFieldErrors.publisherLogoWidth[0]}</p>}
-            </div>
-          </div>
-
-          <div className="mt-4 grid gap-4 md:grid-cols-2">
-            <div className="flex flex-col gap-1">
-              {renderLabel('Publisher Logo Höhe (Google Discover)', isFrontmatterFieldDefault('publisherLogoHeight'))}
-              <input
-                className="rounded-md border border-input bg-background px-3 py-2 text-sm"
-                inputMode="numeric"
-                value={frontmatter.publisherLogoHeight}
-                onChange={handleFrontmatterChange('publisherLogoHeight')}
-                placeholder="512"
-              />
-              {frontmatterFieldErrors.publisherLogoHeight && <p className="text-sm text-destructive">{frontmatterFieldErrors.publisherLogoHeight[0]}</p>}
             </div>
           </div>
         </div>
