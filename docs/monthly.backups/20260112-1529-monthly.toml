@@ -1,10 +1,4 @@
 [[it_aggregate]]
-month = "2026-01"
-label = "Janaur 2026"
-unemployed = 60_787
-seeking = 91_591
-
-[[it_aggregate]]
 month = "2025-12"
 label = "Dezember 2025"
 unemployed = 57_186
@@ -131,11 +125,6 @@ unemployed = 40_057
 seeking = 66_935
 
 [[it_jobs]]
-month = "2026-01"
-label = "Janaur 2026"
-it_jobs = 11_589
-
-[[it_jobs]]
 month = "2025-12"
 label = "Dezember 2025"
 it_jobs = 11_725
@@ -241,15 +230,8 @@ label = "April 2024"
 it_jobs = 17_180
 
 [[germany]]
-month = "2026-01"
-label = "Janaur 2026"
-unemployed = 3_084_613
-seeking = 4_691_703
-jobs = 598_110
-
-[[germany]]
 month = "2025-12"
-label = "12/25"
+label = "Dezember 2025"
 unemployed = 2_907_991
 seeking = 4_677_781
 jobs = 619_351
@@ -290,20 +272,6 @@ seeking = 4_643_574
 jobs = 628_056
 
 [[germany]]
-month = "2025-01"
-label = "Januar 2025"
-unemployed = 2_992_658
-seeking = 4_664_897
-jobs = 632_334
-
-[[germany]]
-month = "2024-12"
-label = "12/24"
-unemployed = 2_806_625
-seeking = 4_646_396
-jobs = 654_251
-
-[[germany]]
 month = "2024-11"
 label = "11/24"
 unemployed = 2_774_028
@@ -330,12 +298,6 @@ label = "07/24"
 unemployed = 2_808_720
 seeking = 4_581_507
 jobs = 703_119
-
-[[infra_aggregate]]
-month = "2026-01"
-label = "Janaur 2026"
-unemployed = 15_638
-seeking = 23_537
 
 [[infra_aggregate]]
 month = "2025-12"
@@ -464,11 +426,6 @@ unemployed = 10_056
 seeking = 17_000
 
 [[infra_jobs]]
-month = "2026-01"
-label = "Janaur 2026"
-it_jobs = 2_911
-
-[[infra_jobs]]
 month = "2025-12"
 label = "Dezember 2025"
 it_jobs = 2_874
@@ -572,12 +529,6 @@ it_jobs = 4_096
 month = "2024-04"
 label = "April 2024"
 it_jobs = 4_022
-
-[[software_aggregate]]
-month = "2026-01"
-label = "Janaur 2026"
-unemployed = 19_897
-seeking = 30_313
 
 [[software_aggregate]]
 month = "2025-12"
@@ -704,11 +655,6 @@ month = "2024-04"
 label = "April 2024"
 unemployed = 12_534
 seeking = 21_414
-
-[[software_jobs]]
-month = "2026-01"
-label = "Janaur 2026"
-it_jobs = 1_803
 
 [[software_jobs]]
 month = "2025-12"

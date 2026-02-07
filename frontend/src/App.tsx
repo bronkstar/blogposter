@@ -915,12 +915,6 @@ const buildUpdatedMonthlyDataset = (
   return updated;
 };
 
-const monthKey = (month: string) => {
-  const [year, part] = month.split('-');
-  if (!year || !part) return '';
-  return `${part}${year.slice(-2)}`;
-};
-
 const formatMonthLabel = (month: string) => {
   const [year, part] = month.split('-');
   if (!year || !part) return '';
